@@ -6,5 +6,4 @@ Route::group(['namespace' => 'Abs\TaxPkg', 'middleware' => ['web', 'auth'], 'pre
 
 	Route::get('/tax-codes/get-list', 'TaxCodeController@getTaxCodeList')->name('getTaxCodeList');
 	Route::get('/tax-code/save', 'TaxCodeController@saveTaxCode')->name('saveTaxCode');
-
 });
