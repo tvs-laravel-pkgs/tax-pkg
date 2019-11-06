@@ -25,7 +25,7 @@
     {
         "psr-4":
         {
-            "Abs\\Tax\\": "src/"
+            "Abs\\TaxPkg\\": "src/"
         }
     }
 }
