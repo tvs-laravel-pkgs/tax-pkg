@@ -17,6 +17,7 @@ class TaxPkgServiceProvider extends ServiceProvider {
 		$this->loadViewsFrom(__DIR__ . '/views', 'basic');
 		$this->publishes([
 			__DIR__ . '/views' => base_path('resources/views/tax-pkg'),
+			__DIR__ . '/public' => base_path('public'),
 		]);
 	}
 
