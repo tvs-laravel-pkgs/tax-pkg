@@ -1,0 +1,31 @@
+{
+    "name": "abs/tax-pkg",
+    "description": "For Tax Codes/Groups and Taxes",
+    "type": "library",
+    "require":
+    {},
+    "require-dev":
+    {},
+    "authors": [
+    {
+        "name": "Abdul",
+        "email": "abdulpro@gmail.com"
+    }],
+    "minimum-stability": "dev",
+    "extra":
+    {
+        "laravel":
+        {
+            "providers": [
+                "Abs\\TaxPkg\\TaxPkgServiceProvider"
+            ]
+        }
+    },
+    "autoload":
+    {
+        "psr-4":
+        {
+            "Abs\\Tax\\": "src/"
+        }
+    }
+}
