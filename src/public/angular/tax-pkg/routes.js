@@ -1,5 +1,5 @@
 app.config(['$routeProvider', function($routeProvider) {
-   
+
     $routeProvider.
     //TAX CODE
     when('/tax-pkg/tax-code/list', {
@@ -13,7 +13,7 @@ app.config(['$routeProvider', function($routeProvider) {
     when('/tax-pkg/tax-code/edit/:id', {
         template: '<tax-code-form></tax-code-form>',
         title: 'Edit Tax Code',
-    })
+    }).
 
     //TAX
     when('/tax-pkg/tax/list', {
@@ -27,5 +27,5 @@ app.config(['$routeProvider', function($routeProvider) {
     when('/tax-pkg/tax/edit/:id', {
         template: '<tax-form></tax-form>',
         title: 'Edit Tax',
-    })
-    ;
+    });
+}]);
