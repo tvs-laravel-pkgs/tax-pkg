@@ -16,7 +16,7 @@ class TaxCode extends Model {
 	];
 
 	public function taxes() {
-		return $this->belongsToMany('Abs\TaxPkg\Tax', 'tax_code_tax');
+		return $this->belongsToMany('Abs\TaxPkg\Tax', 'tax_code_tax', 'tax_code_id', 'tax_id')->withpivot(['percentage']);
 	}
 
 	public static function createFromObject($record_data) {
