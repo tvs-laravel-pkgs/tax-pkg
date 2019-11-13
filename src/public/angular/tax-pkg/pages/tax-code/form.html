@@ -1,0 +1,154 @@
+<!-- Content Wrap -->
+<div class="content-wrap cndn-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="#!/tax-pkg/tax-code/list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content title-block">
+                    <h1 class="title"><b>{{$ctrl.action}} Tax Codes</b></h1>
+                    <p class="subtitle">Tax Code List / Form</p>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content type2">
+        <form id="form" autocomplete="off">
+            <input type="hidden" name="id" value="{{$ctrl.tax_code.id}}">
+            <div class="page-tab-form pb-70">
+                <div class="tab-form-wrap">
+                    <div class="tab-form-header">
+                        <div class="tab-header">
+                            <!-- Filters -->
+                            <div class="isotope-filters animated" data-animation="fadeInLeft" data-animation-delay="300">
+                                <ul class="nav nav-pills cndn-tabs">
+                                    <li class="active"><a class="filter active" data-target="#tax-code" data-toggle="tab" aria-expanded="true">Tax Code</a></li>
+                                    <li><a data-target="#taxes" data-toggle="tab" aria-expanded="true" class="filter">Taxes</a></li>
+                                </ul>
+                            </div><!-- Filters -->
+                        </div><!-- Tab Header -->
+                    </div><!-- Tab Form Header -->
+                    <div class="tab-form-body">
+                        <div class="tab-content">
+                            <!-- TAB PANEL -->
+                            <div class="tab-pane fade in active" id="tax-code" data-animation="fadeInUp" data-animation-delay="300">
+                                <div class="tab-pane-wrap">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>Tax Code <sup class="mandatory">*</sup></label>
+                                                <input type="text" class="form-control required" ng-model="$ctrl.tax_code.code" name="code" placeholder="Enter Tax Code" />
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>Type <sup class="mandatory">*</sup></label>
+                                                <md-select ng-model="$ctrl.tax.type_id" placeholder="Select Type" data-md-container-class="selectdemoSelectHeader">
+                                                    <md-select-header class="demo-select-header ng-hide">
+                                                        <input ng-model="searchType" type="search" placeholder="Search for a Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                    </md-select-header>
+                                                    <md-optgroup label="Type List">
+                                                        <md-option ng-value="type.id" ng-repeat="type in $ctrl.taxcode_type_list | filter:searchTravel">{{type.name}}</md-option>
+                                                    </md-optgroup>
+                                                </md-select>
+                                                <input type="hidden" name="type_id" value='{{$ctrl.tax.type_id}}' class="">
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>Active Status <sup class="mandatory">*</sup></label>
+                                                <div class="tab-switch">
+                                                    <md-switch ng-model="$ctrl.switch_value" aria-label="Switch 1" ng-true-value="'Inactive'" ng-false-value="'Active'" class="md-warn">
+                                                        {{ $ctrl.switch_value }}
+                                                    </md-switch>
+                                                    <input type="hidden" name="status" value="{{$ctrl.switch_value}}">
+                                                </div>
+                                            </div><!-- Form Group -->
+                                        </div><!-- Row -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a class="btn btn-primary btn-nxt">Next</a>
+                                                </div>
+                                            </div>
+                                        </div><!-- Tab Footer -->
+                                    </div><!-- Row -->
+                                </div><!-- Tab Pane Wrap -->
+                            </div><!-- Tabe Pane -->
+                            <div class="tab-pane fade" id="taxes" data-animation="fadeInUp" data-animation-delay="300">
+                                <div class="tab-pane-wrap">
+                                    <div class="row">
+                                        <div class="col-lg-8 col-md-10">
+                                            <h6 class="tab-pane-title">
+                                                <table>
+                                                    <tr>
+                                                        <th>Tax code: <span class="color-primary-light">{{$ctrl.tax_code.code}}</span></th>
+                                                        <th>Type: <span class="color-primary-light">HSN</span></th>
+                                                    </tr>
+                                                </table>
+                                            </h6>
+                                            <div class="table-responsive">
+                                                <table class="table table-form">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Tax</th>
+                                                            <th>Type</th>
+                                                            <th>Percentage</th>
+                                                            <th></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr ng-repeat="(index, tax) in $ctrl.tax_code.taxes">
+                                                            <td>
+                                                                <md-select ng-model="tax.pivot.tax_id" placeholder="Select Tax" data-md-container-class="selectdemoSelectHeader">
+                                                                    <md-select-header class="demo-select-header ng-hide">
+                                                                        <input ng-model="searchTax" type="search" placeholder="Search for a Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                                    </md-select-header>
+                                                                    <md-optgroup label="Taxs List">
+                                                                        <md-option ng-value="tax.id" ng-repeat="tax in $ctrl.tax_list | filter:searchTravel">{{tax.name}}</md-option>
+                                                                    </md-optgroup>
+                                                                </md-select>
+                                                                <input type="hidden" name="tax[{{index}}][tax_id]" value='{{tax.pivot.tax_id}}' class="required">
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" ng-model="tax.pivot.value" class="form-control type-sm required" ng-model="tax.value" name="tax[{{index}}][value]" placeholder="Enter Value" />
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" ng-model="tax.pivot.display_order" class="form-control type-sm required" ng-model="display_order" name="tax[{{index}}][display_order]" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" placeholder="Enter Percentage" />
+                                                            </td>
+                                                            <td>
+                                                                <a href="javascript:;" ng-click="removeGroup(index)"><img class="img-responsive" src="./public/theme/img/table/cndn/delete.svg" alt="Delete" /></a>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                    <tfoot>
+                                                        <tr>
+                                                            <td colspan="3">
+                                                                <button type="button" class="btn btn-primary-light btn-square" ng-click="add_group()">+ Add Sub Category</button>
+                                                            </td>
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+                                            </div><!-- Table Responsive -->
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a class="btn btn-secondary btn-prev">Previous</a>
+                                                    <button type="submit" id="submit" class="btn btn-primary">Submit</button>
+                                                </div>
+                                            </div>
+                                        </div><!-- Tab Footer -->
+                                    </div><!-- Row -->
+                                </div><!-- Tab Pane Wrap -->
+                            </div><!-- Tabe Pane -->
+                        </div><!-- Tab Content -->
+                    </div><!-- Tab Form Body -->
+                </div><!-- Tab Form Wrap -->
+            </div><!-- Page Form -->
+        </form>
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->

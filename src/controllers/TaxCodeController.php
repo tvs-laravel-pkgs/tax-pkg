@@ -1,7 +1,7 @@
 <?php
 
 namespace Abs\TaxPkg;
-use Abs\TaxPkg\Tax;
+use Abs\TaxPkg\TaxCode;
 use App\Config;
 use App\Http\Controllers\Controller;
 use Auth;
@@ -11,13 +11,13 @@ use Illuminate\Http\Request;
 use Validator;
 use Yajra\Datatables\Datatables;
 
-class TaxController extends Controller {
+class TaxCodeController extends Controller {
 
 	public function __construct() {
 	}
 
-	public function getTaxList() {
-		$tax_list = Tax::withTrashed()
+	public function getTaxCodeList() {
+		$tax_list = TaxCode::withTrashed()
 			->select(
 				'taxes.id',
 				'taxes.name as name',
@@ -49,24 +49,27 @@ class TaxController extends Controller {
 			->make(true);
 	}
 
-	public function getTaxFormData($id = NULL) {
+	public function getTaxCodeFormData($id = NULL) {
 		if (!$id) {
-			$tax = new Tax;
+			$tax_code = new TaxCode;
 			$action = 'Add';
 		} else {
-			$tax = Tax::withTrashed()
-				->where('id', $id)->get();
+			$tax_code = TaxCode::withTrashed()->with([
+				'taxes',
+			])->find($id);
 			$action = 'Edit';
 		}
 		$this->data['type_list'] = Collect(Config::getTaxList()->prepend(['id' => '', 'name' => 'Select Type']));
-		$this->data['tax'] = $tax;
+		$this->data['taxcode_type_list'] = Collect(Config::getTaxCodeTypeList()->prepend(['id' => '', 'name' => 'Select Type']));
+		$this->data['tax_list'] = collect(Tax::select('name', 'id')->where('company_id', Auth::user()->company_id)->get()->prepend(['id' => '', 'name' => 'Select Tax']));
+		$this->data['tax_code'] = $tax_code;
 		$this->data['action'] = $action;
 
 		return response()->json($this->data);
 	}
 
-	public function saveTax(Request $request) {
-		// dd($request->all());
+	public function saveTaxCode(Request $request) {
+		dd($request->all());
 		try {
 			if (!empty($request->tax)) {
 				foreach ($request->tax as $taxes) {
@@ -128,7 +131,7 @@ class TaxController extends Controller {
 			return response()->json(['success' => false, 'errors' => ['Exception Error' => $e->getMessage()]]);
 		}
 	}
-	public function deleteTax($id) {
+	public function deleteTaxCode($id) {
 		$delete_status = Tax::where('id', $id)->forceDelete();
 		if ($delete_status) {
 			return response()->json(['success' => true]);
