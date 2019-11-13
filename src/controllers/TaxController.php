@@ -14,4 +14,8 @@ class TaxController extends Controller {
 		dd('inside tax');
 	}
 
+	public function getFormData() {
+		dd('inside tax12312');
+	}
+
 }

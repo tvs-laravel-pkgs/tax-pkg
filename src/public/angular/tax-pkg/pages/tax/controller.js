@@ -1,5 +1,5 @@
-app.component('outletList', {
-    templateUrl: outlet_list_template_url,
+app.component('taxList', {
+    templateUrl: tax_list_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         $http.get(
             get_outlet_filter_url
@@ -159,18 +159,16 @@ app.component('outletList', {
 
 //Outlet view
 
-app.component('outletView', {
-
-    templateUrl: outlet_view_template_get_url,
-
+app.component('taxForm', {
+    templateUrl: tax_form_template_url,
     controller: function($http, $location, $routeParams, $rootScope, HelperService) {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
         $http.get(
-            get_outlet_view_value + '/' + $routeParams.id
+            tax_form_data_url + '/' + $routeParams.id
         ).then(function(response) {
-
-            // self.employee = response.data.employee;
+            alert('');
+            /*// self.employee = response.data.employee;
             // self.reporting_to = response.data.reporting_to;
             // $rootScope.loading = false;
             // console.log(self.employee);
@@ -179,7 +177,7 @@ app.component('outletView', {
             self.sbu = response.data.sbu;
             self.business = response.data.business;
             self.status = response.data.status;
-            self.oulet_id = response.data.oulet_id;
+            self.oulet_id = response.data.oulet_id;*/
 
             // console.log(self.outlet_view);
 
