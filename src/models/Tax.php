@@ -16,6 +16,10 @@ class Tax extends Model {
 		'deleted_by_id',
 	];
 
+	public function serviceInvoiceItems() {
+		return $this->belongsToMany('Abs\ServiceInvoicePkg\ServiceInvoiceItem', 'service_invoice_item_tax');
+	}
+
 	public static function createFromObject($record_data) {
 
 		$errors = [];
