@@ -17,7 +17,7 @@
         "laravel":
         {
             "providers": [
-                "abs\\TaxPkg\\TaxPkgServiceProvider"
+                "Abs\\TaxPkg\\TaxPkgServiceProvider"
             ]
         }
     },
@@ -25,7 +25,7 @@
     {
         "psr-4":
         {
-            "abs\\TaxPkg\\": "src/"
+            "Abs\\TaxPkg\\": "src/"
         }
     }
 }
