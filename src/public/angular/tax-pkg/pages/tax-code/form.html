@@ -46,7 +46,7 @@
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>Type <sup class="mandatory">*</sup></label>
-                                                <md-select ng-model="$ctrl.tax.type_id" placeholder="Select Type" data-md-container-class="selectdemoSelectHeader">
+                                                <md-select ng-model="$ctrl.tax_code.type_id" placeholder="Select Type" data-md-container-class="selectdemoSelectHeader" ng-change="showTypeinTaxes($ctrl.tax_code.type_id)">
                                                     <md-select-header class="demo-select-header ng-hide">
                                                         <input ng-model="searchType" type="search" placeholder="Search for a Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                                     </md-select-header>
@@ -54,7 +54,7 @@
                                                         <md-option ng-value="type.id" ng-repeat="type in $ctrl.taxcode_type_list | filter:searchTravel">{{type.name}}</md-option>
                                                     </md-optgroup>
                                                 </md-select>
-                                                <input type="hidden" name="type_id" value='{{$ctrl.tax.type_id}}' class="">
+                                                <input type="hidden" name="type_id" value='{{$ctrl.tax_code.type_id}}' class="required">
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
@@ -83,12 +83,8 @@
                                     <div class="row">
                                         <div class="col-lg-8 col-md-10">
                                             <h6 class="tab-pane-title">
-                                                <table>
-                                                    <tr>
-                                                        <th>Tax code: <span class="color-primary-light">{{$ctrl.tax_code.code}}</span></th>
-                                                        <th>Type: <span class="color-primary-light">HSN</span></th>
-                                                    </tr>
-                                                </table>
+                                                Tax code: <span class="color-primary-light">{{$ctrl.tax_code.code}}</span>
+                                                Type: <span class="color-primary-light">{{$ctrl.tax_code_type_name}}</span>
                                             </h6>
                                             <div class="table-responsive">
                                                 <table class="table table-form">
@@ -103,7 +99,7 @@
                                                     <tbody>
                                                         <tr ng-repeat="(index, tax) in $ctrl.tax_code.taxes">
                                                             <td>
-                                                                <md-select ng-model="tax.pivot.tax_id" placeholder="Select Tax" data-md-container-class="selectdemoSelectHeader">
+                                                                <md-select ng-model="tax.pivot.tax_id" placeholder="Select Tax" data-md-container-class="selectdemoSelectHeader" ng-change="getTaxType(tax.pivot.tax_id,index)">
                                                                     <md-select-header class="demo-select-header ng-hide">
                                                                         <input ng-model="searchTax" type="search" placeholder="Search for a Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                                                     </md-select-header>
@@ -114,20 +110,20 @@
                                                                 <input type="hidden" name="tax[{{index}}][tax_id]" value='{{tax.pivot.tax_id}}' class="required">
                                                             </td>
                                                             <td>
-                                                                <input type="text" ng-model="tax.pivot.value" class="form-control type-sm required" ng-model="tax.value" name="tax[{{index}}][value]" placeholder="Enter Value" />
+                                                                <label class="type_based_tax_{{index}}"></label>
                                                             </td>
                                                             <td>
-                                                                <input type="text" ng-model="tax.pivot.display_order" class="form-control type-sm required" ng-model="display_order" name="tax[{{index}}][display_order]" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" placeholder="Enter Percentage" />
+                                                                <input type="text" data-eligible="{{index}}_{{tax.id}}" id="eligible_amount_data_{{index}}_{{tax.id}}" ng-model="tax.pivot.percentage" class="form-control type-sm required percentage_check" name="tax[{{index}}][percentage]" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" placeholder="Enter Percentage" />
                                                             </td>
                                                             <td>
-                                                                <a href="javascript:;" ng-click="removeGroup(index)"><img class="img-responsive" src="./public/theme/img/table/cndn/delete.svg" alt="Delete" /></a>
+                                                                <a href="javascript:;" ng-click="removeTax(index)"><img class="img-responsive" src="./public/theme/img/table/cndn/delete.svg" alt="Delete" /></a>
                                                             </td>
                                                         </tr>
                                                     </tbody>
                                                     <tfoot>
                                                         <tr>
                                                             <td colspan="3">
-                                                                <button type="button" class="btn btn-primary-light btn-square" ng-click="add_group()">+ Add Sub Category</button>
+                                                                <button type="button" class="btn btn-primary-light btn-square" ng-click="add_tax()">+ Add Taxes</button>
                                                             </td>
                                                         </tr>
                                                     </tfoot>

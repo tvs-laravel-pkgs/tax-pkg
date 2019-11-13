@@ -34,11 +34,11 @@ app.component('taxCodeList', {
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'name', name: 'serial_number_categories.name' },
-                { data: 'finance_year', name: 'financial_years.name', searchable: false },
-                { data: 'state', name: 'states.name' },
-                { data: 'branch', name: 'outlets.name' },
-                { data: 'starting_number', name: 'starting_number' },
+                { data: 'name', name: 'tax_codes.code' },
+                { data: 'type', name: 'configs.name' },
+                { data: 'cgst', name: 'cgst', searchable: false },
+                { data: 'sgst', name: 'cgst', searchable: false },
+                { data: 'igst', name: 'igst', searchable: false },
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
                 $('#table_info').html('(' + max + ')')
@@ -110,13 +110,27 @@ app.component('taxCodeForm', {
                 } else {
                     self.switch_value = 'Active';
                 }
+                $.each(self.tax_code.taxes, function(index, value) {
+                    $scope.getTaxType(value.id, index);
+                });
+                $scope.showTypeinTaxes(self.tax_code.type_id);
             } else {
                 self.tax_code.taxes = [];
-                $scope.add_Tax();
+                $scope.add_tax();
                 self.switch_value = 'Active';
             }
             $rootScope.loading = false;
         });
+
+        $scope.showTypeinTaxes = function($id) {
+            if ($id) {
+                $.each(self.taxcode_type_list, function(index, value) {
+                    if ($id == value.id) {
+                        self.tax_code_type_name = value.name;
+                    }
+                });
+            }
+        }
 
         /* Tab Funtion */
         $('.btn-nxt').on("click", function() {
@@ -134,7 +148,7 @@ app.component('taxCodeForm', {
         $scope.prev = function() {}
 
         //ADD TAX
-        $scope.add_Tax = function() {
+        $scope.add_tax = function() {
             self.tax_code.taxes.push({});
         }
         //REMOVE TAX 
@@ -146,6 +160,28 @@ app.component('taxCodeForm', {
             self.tax_code.taxes.splice(index, 1);
         }
 
+        //GET TYPE BASED TAX
+        $scope.getTaxType = function(id, index) {
+            $http.get(
+                get_tax_type_based_tax_delete_data_url + '/' + id
+            ).then(function(response) {
+                $(".type_based_tax_" + index).html(response.data.type);
+            });
+        }
+
+        jQuery.extend(jQuery.validator.messages, {
+            max: jQuery.validator.format("Percentage should be lesser than 100")
+        });
+        $(document).on('keydown keyup change', '.percentage_check', function(e) {
+            var keys_ids = $(this).data("eligible");
+            key_id = keys_ids.split("_");
+            if ($(this).val() > 100) {
+                $('#eligible_amount_data_' + key_id[0] + '_' + key_id[1]).attr({
+                    "max": 100
+                });
+            }
+        });
+
         var form_id = '#form';
         var v = jQuery(form_id).validate({
             ignore: '',
@@ -153,7 +189,7 @@ app.component('taxCodeForm', {
                 new Noty({
                     type: 'error',
                     layout: 'topRight',
-                    text: 'Check all tabs for errors'
+                    text: 'You have errors,Please check all tabs'
                 }).show();
             },
             submitHandler: function(form) {
