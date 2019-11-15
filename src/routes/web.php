@@ -11,4 +11,5 @@ Route::group(['namespace' => 'Abs\TaxPkg', 'middleware' => ['web', 'auth'], 'pre
 	Route::post('/tax-codes/save', 'TaxCodeController@saveTaxCode')->name('saveTaxCode');
 	Route::get('/tax-codes/delete/{id}', 'TaxCodeController@deleteTaxCode')->name('deleteTaxCode');
 	Route::get('/tax-codes/getTaxType/{id}', 'TaxCodeController@getTaxType')->name('getTaxType');
+	Route::get('/tax-codes/get-tax-list', 'TaxCodeController@getTaxListInTaxCode')->name('getTaxListInTaxCode');
 });

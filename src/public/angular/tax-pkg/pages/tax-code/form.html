@@ -9,7 +9,7 @@
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
                     <h1 class="title"><b>{{$ctrl.action}} Tax Codes</b></h1>
-                    <p class="subtitle">Tax Code List / Form</p>
+                    <p class="subtitle"><a href="#!/tax-pkg/tax-code/list">Tax Code List</a> / Form</p>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
         </div><!-- Page Header Inner -->
@@ -93,6 +93,7 @@
                                                             <th>Tax</th>
                                                             <th>Type</th>
                                                             <th>Percentage</th>
+                                                            <th>Select State</th>
                                                             <th></th>
                                                         </tr>
                                                     </thead>
@@ -114,6 +115,17 @@
                                                             </td>
                                                             <td>
                                                                 <input type="text" data-eligible="{{index}}_{{tax.id}}" id="eligible_amount_data_{{index}}_{{tax.id}}" ng-model="tax.pivot.percentage" class="form-control type-sm required percentage_check" name="tax[{{index}}][percentage]" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" placeholder="Enter Percentage" />
+                                                            </td>
+                                                            <td class="state_specific_{{index}}" style="display: none;">
+                                                                <md-select ng-model="tax.pivot.state_id" placeholder="Select State" data-md-container-class="selectdemoSelectHeader">
+                                                                    <md-select-header class="demo-select-header ng-hide">
+                                                                        <input ng-model="searchState" type="search" placeholder="Search for a State" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                                    </md-select-header>
+                                                                    <md-optgroup label="States List">
+                                                                        <md-option ng-value="state.id" ng-repeat="state in $ctrl.state_list | filter:searchTravel">{{state.name}}</md-option>
+                                                                    </md-optgroup>
+                                                                </md-select>
+                                                                <input type="hidden" name="tax[{{index}}][state_id]" value='{{tax.pivot.state_id}}' class="">
                                                             </td>
                                                             <td>
                                                                 <a href="javascript:;" ng-click="removeTax(index)"><img class="img-responsive" src="./public/theme/img/table/cndn/delete.svg" alt="Delete" /></a>
