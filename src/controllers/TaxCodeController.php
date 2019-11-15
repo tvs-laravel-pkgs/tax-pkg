@@ -4,6 +4,7 @@ namespace Abs\TaxPkg;
 use Abs\TaxPkg\TaxCode;
 use App\Config;
 use App\Http\Controllers\Controller;
+use App\State;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -16,6 +17,12 @@ class TaxCodeController extends Controller {
 	public function __construct() {
 	}
 
+	public function getTaxListInTaxCode() {
+		$this->data['tax_list'] = $tax_type_list = Tax::select('id', 'name')->where('company_id', Auth::user()->company_id)
+			->get();
+		return response()->json($this->data);
+	}
+
 	public function getTaxCodeList() {
 		$tax_code_list = TaxCode::withTrashed()
 			->select(
@@ -26,53 +33,36 @@ class TaxCodeController extends Controller {
 			)
 			->join('configs', 'configs.id', 'tax_codes.type_id')
 			->where('tax_codes.company_id', Auth::user()->company_id)
-			->orderby('tax_codes.id', 'desc');
+			->orderby('tax_codes.id', 'desc')
+			->get()
+		;
 
-		return Datatables::of($tax_code_list)
-			->addColumn('name', function ($tax_code_list) {
-				$status = $tax_code_list->status == 'Active' ? 'green' : 'red';
-				return '<span class="status-indicator ' . $status . '"></span>' . $tax_code_list->name;
-			})
-			->addColumn('cgst', function ($tax_code_list) {
-				$get_cgst = DB::table('tax_code_tax')->select('percentage')
-					->leftJoin('taxes', 'taxes.id', '=', 'tax_code_tax.tax_id')
-					->where('tax_code_id', $tax_code_list->id)
-					->where('taxes.name', 'LIKE', '%CGST%')
-					->first();
-				if (!empty($get_cgst)) {
-					return intval($get_cgst->percentage);
+		$data_table = Datatables::of($tax_code_list);
+
+		$data_table->addColumn('name', function ($tax_code_list) {
+			$status = $tax_code_list->status == 'Active' ? 'green' : 'red';
+			return '<span class="status-indicator ' . $status . '"></span>' . $tax_code_list->name;
+		});
+
+		$tax_list = Tax::where('company_id', Auth::user()->company_id)
+			->get();
+		foreach ($tax_list as $tax) {
+			$data_table->addColumn($tax->name, function ($tax_code_list) use ($tax) {
+				$tax_code_taxes = DB::table('tax_code_tax')
+					->where('tax_id', $tax->id)
+					->where('tax_code_id', $tax_code_list->id)->first();
+				if ($tax_code_taxes) {
+					return intval($tax_code_taxes->percentage);
 				} else {
 					return '--';
 				}
-			})
-			->addColumn('sgst', function ($tax_code_list) {
-				$get_sgst = DB::table('tax_code_tax')->select('percentage')
-					->leftJoin('taxes', 'taxes.id', '=', 'tax_code_tax.tax_id')
-					->where('tax_code_id', $tax_code_list->id)
-					->where('taxes.name', 'LIKE', '%SGST%')
-					->first();
-				if (!empty($get_sgst)) {
-					return intval($get_sgst->percentage);
-				} else {
-					return '--';
-				}
-			})
-			->addColumn('igst', function ($tax_code_list) {
-				$get_igst = DB::table('tax_code_tax')->select('percentage')
-					->leftJoin('taxes', 'taxes.id', '=', 'tax_code_tax.tax_id')
-					->where('tax_code_id', $tax_code_list->id)
-					->where('taxes.name', 'LIKE', '%IGST%')
-					->first();
-				if (!empty($get_igst)) {
-					return intval($get_igst->percentage);
-				} else {
-					return '--';
-				}
-			})
-			->addColumn('action', function ($tax_code_list) {
-				$edit_img = asset('public/theme/img/table/cndn/edit.svg');
-				$delete_img = asset('public/theme/img/table/cndn/delete.svg');
-				return '
+			});
+		}
+
+		$data_table->addColumn('action', function ($tax_code_list) {
+			$edit_img = asset('public/theme/img/table/cndn/edit.svg');
+			$delete_img = asset('public/theme/img/table/cndn/delete.svg');
+			return '
 					<a href="#!/tax-pkg/tax-code/edit/' . $tax_code_list->id . '">
 						<img src="' . $edit_img . '" alt="View" class="img-responsive">
 					</a>
@@ -81,8 +71,10 @@ class TaxCodeController extends Controller {
 					<img src="' . $delete_img . '" alt="delete" class="img-responsive">
 					</a>
 					';
-			})
-			->make(true);
+		});
+
+		return $data_table->make(true);
+
 	}
 
 	public function getTaxCodeFormData($id = NULL) {
@@ -96,6 +88,7 @@ class TaxCodeController extends Controller {
 			$action = 'Edit';
 		}
 		$this->data['type_list'] = Collect(Config::getTaxList()->prepend(['id' => '', 'name' => 'Select Type']));
+		$this->data['state_list'] = collect(State::getStateList())->prepend(['id' => '', 'name' => 'Select State']);
 		$this->data['taxcode_type_list'] = Collect(Config::getTaxCodeTypeList()->prepend(['id' => '', 'name' => 'Select Type']));
 		$this->data['tax_list'] = collect(Tax::select('name', 'id')->where('company_id', Auth::user()->company_id)->get()->prepend(['id' => '', 'name' => 'Select Tax']));
 		$this->data['tax_code'] = $tax_code;
@@ -107,6 +100,7 @@ class TaxCodeController extends Controller {
 	public function getTaxType($id) {
 		$get_type = Tax::select(
 			'taxes.id',
+			'taxes.type_id',
 			'configs.name as type'
 		)
 			->join('configs', 'configs.id', 'taxes.type_id')
@@ -172,6 +166,7 @@ class TaxCodeController extends Controller {
 				foreach ($request->tax as $taxes) {
 					$tax_code->taxes()->attach($taxes['tax_id'], [
 						'percentage' => $taxes['percentage'],
+						'state_id' => $taxes['state_id'],
 					]);
 				}
 			}
