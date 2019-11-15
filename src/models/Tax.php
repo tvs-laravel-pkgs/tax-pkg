@@ -35,7 +35,7 @@ class Tax extends Model {
 			return;
 		}
 
-		$type = Config::where('name', $record_data->type)->where('config_type_id', 88)->first();
+		$type = Config::where('name', $record_data->type)->where('config_type_id', 89)->first();
 		if (!$type) {
 			$errors[] = 'Invalid Tax Type : ' . $record_data->type;
 		}
