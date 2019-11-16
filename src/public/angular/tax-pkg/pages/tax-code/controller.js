@@ -42,6 +42,16 @@ app.component('taxCodeList', {
                 paging: true,
                 retrieve: true,
                 stateSave: true,
+                stateSaveCallback: function(settings, data) {
+                    localStorage.setItem('TCDataTables_' + settings.sInstance, JSON.stringify(data));
+                },
+                stateLoadCallback: function(settings) {
+                    var state_save_val = JSON.parse(localStorage.getItem('TCDataTables_' + settings.sInstance));
+                    if (state_save_val) {
+                        $('#search_tax_code').val(state_save_val.search.search);
+                    }
+                    return JSON.parse(localStorage.getItem('TCDataTables_' + settings.sInstance));
+                },
                 ordering: false,
                 scrollY: table_scroll + "px",
                 scrollCollapse: true,
@@ -52,9 +62,15 @@ app.component('taxCodeList', {
                     data: function(d) {},
                 },
                 columns: column,
+                infoCallback: function(settings, start, end, max, total, pre) {
+                    $('#table_info').html(total)
+                    $('.foot_info').html('Showing ' + start + ' to ' + end + ' of ' + max + ' entries')
+                },
+                rowCallback: function(row, data) {
+                    $(row).addClass('highlight-row');
+                }
             });
             $('.dataTables_length select').select2();
-            $('#search_tax_code').val(this.value);
 
             $scope.clear_search = function() {
                 $('#search_tax_code').val('');

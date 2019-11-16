@@ -20,8 +20,18 @@ app.component('taxList', {
             pageLength: 10,
             processing: true,
             serverSide: true,
-            paging: true,
             stateSave: true,
+            stateSaveCallback: function(settings, data) {
+                localStorage.setItem('TDataTables_' + settings.sInstance, JSON.stringify(data));
+            },
+            stateLoadCallback: function(settings) {
+                var state_save_val = JSON.parse(localStorage.getItem('TDataTables_' + settings.sInstance));
+                if (state_save_val) {
+                    $('#search_taxes').val(state_save_val.search.search);
+                }
+                return JSON.parse(localStorage.getItem('TDataTables_' + settings.sInstance));
+            },
+            paging: true,
             ordering: false,
             scrollY: table_scroll + "px",
             scrollCollapse: true,
@@ -37,15 +47,15 @@ app.component('taxList', {
                 { data: 'name', name: 'taxes.name' },
                 { data: 'type', name: 'configs.name' },
             ],
-            "infoCallback": function(settings, start, end, max, total, pre) {
-                $('#table_info').html('(' + max + ')')
+            infoCallback: function(settings, start, end, max, total, pre) {
+                $('#table_info').html(total)
+                $('.foot_info').html('Showing ' + start + ' to ' + end + ' of ' + max + ' entries')
             },
             rowCallback: function(row, data) {
                 $(row).addClass('highlight-row');
             }
         });
         $('.dataTables_length select').select2();
-        $('#search_taxes').val(this.value);
 
         $scope.clear_search = function() {
             $('#search_taxes').val('');
