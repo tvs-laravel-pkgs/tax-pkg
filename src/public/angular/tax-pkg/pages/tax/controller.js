@@ -147,6 +147,15 @@ app.component('taxForm', {
             self.tax.splice(index, 1);
         }
 
+        //VALIDATEOR FOR MULTIPLE 
+        $.validator.messages.minlength = 'Minimum of 3 charaters';
+        $.validator.messages.maxlength = 'Maximum of 191 charaters';
+        jQuery.validator.addClassRules("tax_name", {
+            required: true,
+            minlength: 3,
+            maxlength: 191,
+        });
+
         var form_id = '#form';
         var v = jQuery(form_id).validate({
             ignore: '',

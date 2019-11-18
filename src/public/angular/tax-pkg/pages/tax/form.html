@@ -8,8 +8,8 @@
                     <a href="#!/tax-pkg/tax/list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
-                    <h1 class="title"><b>{{$ctrl.action}} Taxes</b></h1>
-                    <p class="subtitle"><a href="#!/tax-pkg/tax/list">Taxes List</a> / Form</p>
+                    <h1 class="title"><b>{{$ctrl.action}} Tax</b></h1>
+                    <p class="subtitle"><a href="#!/tax-pkg/tax/list">Taxes List</a> / {{$ctrl.action}}</p>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
         </div><!-- Page Header Inner -->
@@ -50,7 +50,7 @@
                                                         <tr ng-repeat="(index, tax) in $ctrl.tax">
                                                             <input type="hidden" ng-model="tax.id" name="tax[{{index}}][id]" value="{{tax.id}}">
                                                             <td>
-                                                                <input type="text" class="form-control type-sm required" ng-model="tax.name" name="tax[{{index}}][name]" placeholder="Enter tax Name" maxlength="191" />
+                                                                <input type="text" class="form-control type-sm tax_name" ng-model="tax.name" name="tax[{{index}}][name]" placeholder="Enter Tax Name" />
                                                             </td>
                                                             <td>
                                                                 <md-select ng-model="tax.type_id" placeholder="Select Type" data-md-container-class="selectdemoSelectHeader">
