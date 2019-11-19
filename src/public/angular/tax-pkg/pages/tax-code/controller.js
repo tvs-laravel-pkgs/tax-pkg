@@ -193,9 +193,11 @@ app.component('taxCodeForm', {
             ).then(function(response) {
                 console.log(response);
                 if (response.data.type_id == 1162) {
+                    $(".notstate_specific_" + index).css('display', 'none');
                     $(".state_specific_" + index).css('display', 'table-cell');
                     $(".type_based_tax_" + index).html(response.data.type);
                 } else {
+                    $(".notstate_specific_" + index).css('display', 'table-cell');
                     $(".state_specific_" + index).css('display', 'none');
                     $(".type_based_tax_" + index).html(response.data.type);
                 }

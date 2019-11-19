@@ -8,8 +8,8 @@
                     <a href="#!/tax-pkg/tax-code/list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
-                    <h1 class="title"><b>{{$ctrl.action}} Tax Codes</b></h1>
-                    <p class="subtitle"><a href="#!/tax-pkg/tax-code/list">Tax Code List</a> / Form</p>
+                    <h1 class="title"><b>{{$ctrl.action}} Tax Code</b></h1>
+                    <p class="subtitle"><a href="#!/tax-pkg/tax-code/list">Tax Code List</a> / {{$ctrl.action}}</p>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
         </div><!-- Page Header Inner -->
@@ -114,6 +114,7 @@
                                                             <td>
                                                                 <input type="text" data-eligible="{{index}}_{{tax.id}}" id="eligible_amount_data_{{index}}_{{tax.id}}" ng-model="tax.pivot.percentage" class="form-control type-sm required percentage_check" name="tax[{{index}}][percentage]" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" placeholder="Enter Percentage" />
                                                             </td>
+                                                            <td class="notstate_specific_{{index}}"></td>
                                                             <td class="state_specific_{{index}}" style="display: none;">
                                                                 <md-select ng-model="tax.pivot.state_id" placeholder="Select State" data-md-container-class="selectdemoSelectHeader">
                                                                     <md-select-header class="demo-select-header ng-hide">
