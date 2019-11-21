@@ -9,8 +9,8 @@ app.component('taxCodeList', {
         var column = [];
         var column = [
             { data: 'action', class: 'action', searchable: false },
-            { data: 'name', name: 'tax_codes.code' },
-            { data: 'type', name: 'configs.name' }
+            { data: 'name', name: 'name' },
+            { data: 'type', name: 'type' }
         ];
 
         $http.get(
@@ -215,6 +215,15 @@ app.component('taxCodeForm', {
                     "max": 100
                 });
             }
+        });
+
+        //VALIDATEOR FOR MULTIPLE 
+        $.validator.messages.minlength = 'Minimum of 3 charaters';
+        $.validator.messages.maxlength = 'Maximum of 50 charaters';
+        jQuery.validator.addClassRules("tax_code_name", {
+            required: true,
+            minlength: 3,
+            maxlength: 50,
         });
 
         var form_id = '#form';
