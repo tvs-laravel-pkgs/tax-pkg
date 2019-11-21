@@ -19,10 +19,24 @@ class TaxCode extends Model {
 		return $this->belongsToMany('Abs\TaxPkg\Tax', 'tax_code_tax', 'tax_code_id', 'tax_id')->withpivot(['percentage', 'state_id']);
 	}
 
-	public static function createFromObject($record_data) {
+	public static function createFromCollection($records, $company = null) {
+		foreach ($records as $key => $record_data) {
+			try {
+				if (!$record_data->company) {
+					continue;
+				}
+				$record = self::createFromObject($record_data, $company);
+			} catch (Exception $e) {
+				dd($e);
+			}
+		}
+	}
+	public static function createFromObject($record_data, $company = null) {
 
 		$errors = [];
-		$company = Company::where('code', $record_data->company)->first();
+		if (!$company) {
+			$company = Company::where('code', $record_data->company)->first();
+		}
 		if (!$company) {
 			dump('Invalid Company : ' . $record_data->company);
 			return;
@@ -63,19 +77,6 @@ class TaxCode extends Model {
 			],
 		]);
 		return $record;
-	}
-
-	public static function createFromCollection($records) {
-		foreach ($records as $key => $record_data) {
-			try {
-				if (!$record_data->company) {
-					continue;
-				}
-				$record = self::createFromObject($record_data);
-			} catch (Exception $e) {
-				dd($e);
-			}
-		}
 	}
 
 }
