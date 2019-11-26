@@ -2,8 +2,11 @@
 
 namespace Abs\TaxPkg;
 
+use Abs\ServiceInvoicePkg\ServiceItem;
 use App\Company;
 use App\Config;
+use App\Customer;
+use App\Outlet;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -18,6 +21,78 @@ class Tax extends Model {
 
 	public function serviceInvoiceItems() {
 		return $this->belongsToMany('Abs\ServiceInvoicePkg\ServiceInvoiceItem', 'service_invoice_item_tax');
+	}
+
+	public function taxCodes() {
+		return $this->belongsToMany('Abs\TaxPkg\TaxCode', 'tax_code_tax', 'tax_id', 'tax_code_id');
+	}
+
+	public static function getTaxes($service_item_id, $branch_id, $customer_id) {
+		$response = array();
+		$serviceItem = ServiceItem::find($service_item_id);
+		if (!$serviceItem) {
+			$response['success'] = false;
+			$response['error'] = 'Service Item not found';
+			return $response;
+		}
+
+		$branch = Outlet::find($branch_id);
+		if (!$branch) {
+			$response['success'] = false;
+			$response['error'] = 'Branch not found';
+			return $response;
+		}
+		if (!$branch->state_id) {
+			$response['success'] = false;
+			$response['error'] = 'No state informations available for branch';
+			return $response;
+		}
+
+		$customer = Customer::find($customer_id);
+		if (!$customer) {
+			$response['success'] = false;
+			$response['error'] = 'Customer not found';
+			return $response;
+		}
+
+		if (!$customer->primaryAddress || !$customer->primaryAddress->state_id) {
+			$response['success'] = false;
+			$response['error'] = 'No state informations available for customer';
+			return $response;
+		}
+
+		$branch_state_id = $branch->state_id ? $branch->state_id : null;
+		$customer_state_id = ($customer->primaryAddress ? ($customer->primaryAddress->state_id ? $customer->primaryAddress->state_id : null) : null);
+
+		if ($branch_state_id && $customer_state_id) {
+			//WITHIN STATE && STATE SPECIFIC(IF CUSTOMER STATE MATCHES)
+			if ($branch_state_id == $customer_state_id) {
+				$within_state_tax = self::where('type_id', 1160)->pluck('id')->toArray();
+				$statespec_tax = self::where('type_id', 1162)->first();
+				if ($statespec_tax) {
+					$state_specifi_tax = $serviceItem->taxCode->taxes()->where('state_id', $customer_state_id)->pluck('tax_id')->toArray();
+				} else {
+					$state_specifi_tax = [];
+				}
+				$taxes = array_unique(array_merge($within_state_tax, $state_specifi_tax));
+			} else {
+				//INTER STATE && STATE SPECIFIC(IF CUSTOMER STATE MATCHES)
+				$inter_state_tax = self::where('type_id', 1161)->pluck('id')->toArray();
+				$statespec_tax = self::where('type_id', 1162)->first();
+				if ($statespec_tax) {
+					$state_specifi_tax = $serviceItem->taxCode->taxes()->where('state_id', $customer_state_id)->pluck('tax_id')->toArray();
+				} else {
+					$state_specifi_tax = [];
+				}
+				$taxes = array_unique(array_merge($inter_state_tax, $state_specifi_tax));
+			}
+		} else {
+			$taxes = [];
+		}
+
+		$response['success'] = true;
+		$response['tax_ids'] = $taxes;
+		return $response;
 	}
 
 	public static function createFromCollection($records, $company = null) {
