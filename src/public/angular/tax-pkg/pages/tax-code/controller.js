@@ -21,7 +21,7 @@ app.component('taxCodeList', {
             var heads = '<th>Action</th><th>Tax Code</th><th>Type</th>';
             angular.forEach(self.tax_list, function(value, key) {
                 heads += '<th>' + value.name + ' %</th>';
-                column.push({ data: value.name, name: 'taxes.name', searchable: false });
+                column.push({ data: value.name, name: 'taxes.name', searchable: false, class: "text-rigth" });
             });
             $('#dynamic_head').append(heads);
 
