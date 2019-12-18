@@ -52,7 +52,7 @@ class TaxCodeController extends Controller {
 					->where('tax_id', $tax->id)
 					->where('tax_code_id', $tax_code_list->id)->first();
 				if ($tax_code_taxes) {
-					return intval($tax_code_taxes->percentage);
+					return $tax_code_taxes->percentage;
 				} else {
 					return '--';
 				}
