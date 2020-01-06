@@ -3,6 +3,7 @@
 namespace Abs\TaxPkg;
 use App\Company;
 use App\Config;
+use Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -77,6 +78,21 @@ class TaxCode extends Model {
 			],
 		]);
 		return $record;
+	}
+
+	public static function searchSacCode($r) {
+		$key = $r->key;
+		$list = self::where('company_id', Auth::user()->company_id)
+			->select(
+				'id',
+				'code'
+			)
+			->where(function ($q) use ($key) {
+				$q->orWhere('code', 'like', '%' . $key . '%')
+				;
+			})
+			->get();
+		return response()->json($list);
 	}
 
 }
