@@ -67,25 +67,25 @@ class Tax extends Model {
 		if ($branch_state_id && $customer_state_id) {
 			//WITHIN STATE && STATE SPECIFIC(IF CUSTOMER STATE MATCHES)
 			if ($branch_state_id == $customer_state_id) {
-				$within_state_tax = self::where('type_id', 1160)->pluck('id')->toArray();
-				$statespec_tax = self::where('type_id', 1162)->first();
-				if ($statespec_tax) {
-					$state_specifi_tax = $serviceItem->taxCode->taxes()->where('state_id', $customer_state_id)->pluck('tax_id')->toArray();
-				} else {
-					$state_specifi_tax = [];
-				}
-				$taxes = array_unique(array_merge($within_state_tax, $state_specifi_tax));
+				$general_taxes = self::where('type_id', 1160)->pluck('id')->toArray();
 			} else {
 				//INTER STATE && STATE SPECIFIC(IF CUSTOMER STATE MATCHES)
-				$inter_state_tax = self::where('type_id', 1161)->pluck('id')->toArray();
+				$general_taxes = self::where('type_id', 1161)->pluck('id')->toArray();
 				$statespec_tax = self::where('type_id', 1162)->first();
 				if ($statespec_tax) {
 					$state_specifi_tax = $serviceItem->taxCode->taxes()->where('state_id', $customer_state_id)->pluck('tax_id')->toArray();
 				} else {
 					$state_specifi_tax = [];
 				}
-				$taxes = array_unique(array_merge($inter_state_tax, $state_specifi_tax));
 			}
+			$statespec_tax = self::where('type_id', 1162)->first();
+			if ($statespec_tax && $serviceItem->taxCode) {
+				$state_specifi_tax = $serviceItem->taxCode->taxes()->where('state_id', $customer_state_id)->pluck('tax_id')->toArray();
+			} else {
+				$state_specifi_tax = [];
+			}
+			$taxes = array_unique(array_merge($general_taxes, $state_specifi_tax));
+
 		} else {
 			$taxes = [];
 		}
