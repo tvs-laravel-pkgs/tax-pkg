@@ -1,13 +1,13 @@
 <?php
 
 namespace Abs\TaxPkg;
+use App\BaseModel;
 use App\Company;
 use App\Config;
 use Auth;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class TaxCode extends Model {
+class TaxCode extends BaseModel {
 	use SoftDeletes;
 	protected $table = 'tax_codes';
 	protected $fillable = [
@@ -15,6 +15,16 @@ class TaxCode extends Model {
 		'updated_by_id',
 		'deleted_by_id',
 	];
+
+	// Relationships --------------------------------------------------------------
+
+	public static function relationships($action = '') {
+		$relationships = [
+			'taxes',
+		];
+
+		return $relationships;
+	}
 
 	public function taxes() {
 		return $this->belongsToMany('Abs\TaxPkg\Tax', 'tax_code_tax', 'tax_code_id', 'tax_id')->withpivot(['percentage', 'state_id']);
@@ -106,6 +116,5 @@ class TaxCode extends Model {
 		}
 		return $list;
 	}
-
 
 }
