@@ -1,7 +1,7 @@
 <?php
 
 namespace Abs\TaxPkg;
-use App\BaseModel;
+use Abs\BasicPkg\BaseModel;
 use App\Company;
 use App\Config;
 use Auth;
