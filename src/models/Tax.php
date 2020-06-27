@@ -2,22 +2,27 @@
 
 namespace Abs\TaxPkg;
 
+use Abs\BasicPkg\BaseModel;
 use Abs\ServiceInvoicePkg\ServiceItem;
 use App\Company;
 use App\Config;
 use App\Customer;
 use App\Outlet;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Tax extends Model {
+class Tax extends BaseModel {
 	use SoftDeletes;
 	protected $table = 'taxes';
 	protected $fillable = [
+		'company_id',
+		'type_id',
+		'code',
 		'created_by_id',
 		'updated_by_id',
 		'deleted_by_id',
 	];
+
+	// Relations --------------------------------------------------------------
 
 	public function serviceInvoiceItems() {
 		return $this->belongsToMany('Abs\ServiceInvoicePkg\ServiceInvoiceItem', 'service_invoice_item_tax');

@@ -11,6 +11,9 @@ class TaxCode extends BaseModel {
 	use SoftDeletes;
 	protected $table = 'tax_codes';
 	protected $fillable = [
+		'company_id',
+		'type_id',
+		'name',
 		'created_by_id',
 		'updated_by_id',
 		'deleted_by_id',
