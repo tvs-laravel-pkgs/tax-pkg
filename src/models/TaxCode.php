@@ -57,28 +57,6 @@ class TaxCode extends BaseModel {
 		return $this->belongsToMany('Abs\TaxPkg\Tax', 'tax_code_tax', 'tax_code_id', 'tax_id')->withpivot(['percentage', 'state_id']);
 	}
 
-	protected static $excelColumnRules = [
-		'Code' => [
-			'table_column_name' => 'code',
-			'rules' => [
-				'required' => [
-				],
-			],
-		],
-		'Type Name' => [
-			'table_column_name' => 'type_id',
-			'rules' => [
-				'required' => [
-				],
-				'fk' => [
-					'class' => 'App\Config',
-					'foreign_table_column' => 'name',
-				],
-			],
-		],
-
-	];
-
 	public static function saveFromObject($record_data) {
 		$record = [
 			'Company Code' => $record_data->company_code,
