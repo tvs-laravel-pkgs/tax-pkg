@@ -6,6 +6,7 @@ use Abs\BasicPkg\BaseModel;
 use Abs\HelperPkg\Traits\SeederTrait;
 use Abs\ServiceInvoicePkg\ServiceItem;
 use App\Company;
+use App\Config;
 use App\Customer;
 use App\Outlet;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -31,6 +32,15 @@ class Tax extends BaseModel {
 				],
 			],
 		],
+		'Type Name' => [
+			'table_column_name' => 'type_id',
+			'rules' => [
+				'fk' => [
+					'class' => 'App\Config',
+					'foreign_table_column' => 'name',
+				],
+			],
+		],
 
 	];
 	// Relations --------------------------------------------------------------
@@ -47,6 +57,7 @@ class Tax extends BaseModel {
 		$record = [
 			'Company Code' => $record_data->company_code,
 			'Tax Name' => $record_data->tax_name,
+			'Type Name' => $record_data->type_name,
 		];
 		return static::saveFromExcelArray($record);
 	}
@@ -75,6 +86,27 @@ class Tax extends BaseModel {
 			$created_by_id = $record_data['created_by_id'];
 		}
 
+		$type_id = null;
+		if (!empty($record_data['Type Name'])) {
+			$type = Config::where([
+				'config_type_id' => 89,
+				'name' => $record_data['Type Name'],
+			])->first();
+
+			if (!$type) {
+				$errors[] = 'Invalid Type Name : ' . $record_data['Type Name'];
+			} else {
+				$type_id = $type->id;
+			}
+		}
+
+		if (count($errors) > 0) {
+			return [
+				'success' => false,
+				'errors' => $errors,
+			];
+		}
+
 		$record = Self::firstOrNew([
 			'company_id' => $company->id,
 			'name' => $record_data['Tax Name'],
@@ -84,6 +116,7 @@ class Tax extends BaseModel {
 			return $result;
 		}
 
+		$record->type_id = $type_id;
 		$record->company_id = $company->id;
 		$record->created_by_id = $created_by_id;
 		$record->save();
