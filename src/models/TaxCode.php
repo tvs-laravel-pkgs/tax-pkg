@@ -9,8 +9,8 @@ use Auth;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TaxCode extends BaseModel {
-	use SeederTrait;
 	use SoftDeletes;
+	use SeederTrait;
 	protected $table = 'tax_codes';
 	protected $fillable = [
 		'company_id',
@@ -56,6 +56,28 @@ class TaxCode extends BaseModel {
 	public function taxes() {
 		return $this->belongsToMany('Abs\TaxPkg\Tax', 'tax_code_tax', 'tax_code_id', 'tax_id')->withpivot(['percentage', 'state_id']);
 	}
+
+	protected static $excelColumnRules = [
+		'Code' => [
+			'table_column_name' => 'code',
+			'rules' => [
+				'required' => [
+				],
+			],
+		],
+		'Type Name' => [
+			'table_column_name' => 'type_id',
+			'rules' => [
+				'required' => [
+				],
+				'fk' => [
+					'class' => 'App\Config',
+					'foreign_table_column' => 'name',
+				],
+			],
+		],
+
+	];
 
 	public static function saveFromObject($record_data) {
 		$record = [
@@ -171,82 +193,120 @@ class TaxCode extends BaseModel {
 			$errors[] = 'Invalid Tax code : ' . $record_data->code;
 		}
 
+		if (!isset($record_data['created_by_id'])) {
+			$admin = $company->admin();
+
+			if (!$admin) {
+				return [
+					'success' => false,
+					'errors' => ['Default Admin user not found'],
+				];
+			}
+			$created_by_id = $admin->id;
+		} else {
+			$created_by_id = $record_data['created_by_id'];
+		}
+
+		$type_id = null;
+
+		if (empty($record_data['Type Name'])) {
+			$errors[] = 'Type Name is empty';
+		} else {
+			$type = Config::where([
+				'config_type_id' => 82,
+				'name' => $record_data['Type Name'],
+			])->first();
+			if (!$type) {
+				$errors[] = 'Invalid Type Name : ' . $record_data['Type Name'];
+			} else {
+				$type_id = $type->id;
+			}
+		}
+
 		if (count($errors) > 0) {
 			return [
 				'success' => false,
 				'errors' => $errors,
 			];
-			return;
 		}
 
-		$tax->taxCodes()->syncWithoutDetaching([$tax_code->id]);
+		$record = Self::firstOrNew([
+			'company_id' => $company->id,
+			'code' => $record_data['Code'],
+		]);
+		$result = Self::validateAndFillExcelColumns($record_data, Static::$excelColumnRules, $record);
+		if (!$result['success']) {
+			return $result;
+		}
+
+		$record->type_id = $type_id;
+		$record->company_id = $company->id;
+		$record->created_by_id = $created_by_id;
+		$record->save();
 		return [
 			'success' => true,
 		];
-
-		// return $role;
 	}
 
-	// public static function createFromCollection($records, $company = null) {
-	// 	foreach ($records as $key => $record_data) {
-	// 		try {
-	// 			if (!$record_data->company) {
-	// 				continue;
-	// 			}
-	// 			$record = self::createFromObject($record_data, $company);
-	// 		} catch (Exception $e) {
-	// 			dd($e);
-	// 		}
-	// 	}
-	// }
+	/*public static function createFromCollection($records, $company = null) {
+			foreach ($records as $key => $record_data) {
+				try {
+					if (!$record_data->company) {
+						continue;
+					}
+					$record = self::createFromObject($record_data, $company);
+				} catch (Exception $e) {
+					dd($e);
+				}
+			}
+		}
+		public static function createFromObject($record_data, $company = null) {
 
-	// public static function createFromObject($record_data, $company = null) {
+			$errors = [];
+			if (!$company) {
+				$company = Company::where('code', $record_data->company)->first();
+			}
+			if (!$company) {
+				dump('Invalid Company : ' . $record_data->company);
+				return;
+			}
 
-	// 	$errors = [];
-	// 	if (!$company) {
-	// 		$company = Company::where('code', $record_data->company)->first();
-	// 	}
-	// 	if (!$company) {
-	// 		dump('Invalid Company : ' . $record_data->company);
-	// 		return;
-	// 	}
+			$admin = $company->admin();
+			if (!$admin) {
+				dump('Default Admin user not found');
+				return;
+			}
 
-	// 	$admin = $company->admin();
-	// 	if (!$admin) {
-	// 		dump('Default Admin user not found');
-	// 		return;
-	// 	}
+			$type = Config::where('name', $record_data->type)->where('config_type_id', 82)->first();
+			if (!$type) {
+				$errors[] = 'Invalid type : ' . $record_data->type;
+			}
 
-	// 	$type = Config::where('name', $record_data->type)->where('config_type_id', 82)->first();
-	// 	if (!$type) {
-	// 		$errors[] = 'Invalid type : ' . $record_data->type;
-	// 	}
+			$tax = Tax::where('name', $record_data->tax)->where('company_id', $company->id)->first();
+			if (!$tax) {
+				$errors[] = 'Invalid tax : ' . $record_data->tax;
+			}
 
-	// 	$tax = Tax::where('name', $record_data->tax)->where('company_id', $company->id)->first();
-	// 	if (!$tax) {
-	// 		$errors[] = 'Invalid tax : ' . $record_data->tax;
-	// 	}
+			if (count($errors) > 0) {
+				dump($errors);
+				return;
+			}
 
-	// 	if (count($errors) > 0) {
-	// 		dump($errors);
-	// 		return;
-	// 	}
+			$record = self::firstOrNew([
+				'company_id' => $company->id,
+				'code' => $record_data->code,
+			]);
+			$record->type_id = $type->id;
+			$record->created_by_id = $admin->id;
+			$record->save();
 
-	// 	$record = self::firstOrNew([
-	// 		'company_id' => $company->id,
-	// 		'code' => $record_data->code,
-	// 	]);
-	// 	$record->type_id = $type->id;
-	// 	$record->created_by_id = $admin->id;
-	// 	$record->save();
-
-	// 	$record->taxes()->syncWithoutDetaching([
-	// 		$tax->id => [
-	// 			'percentage' => $record_data->percentage,
-	// 		],
-	// 	]);
-	// 	return $record;
-	// }
+			$record->taxes()->syncWithoutDetaching([
+				$tax->id => [
+					'percentage' => $record_data->percentage,
+				],
+			]);
+			return $record;
+	*/
 
 	public static function searchSacCode($r) {
 		$key = $r->key;
