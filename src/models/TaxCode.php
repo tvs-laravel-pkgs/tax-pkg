@@ -159,72 +159,64 @@ class TaxCode extends BaseModel {
 		return $error_records;
 	}
 
-	public static function mapTax($record_data) {
-		$errors = [];
-		$tax = Tax::where('name', $record_data->tax_name)->first();
-		if (!$tax) {
-			$errors[] = 'Invalid Tax name : ' . $record_data->tax_name;
-		}
+	// public static function mapTax($record_data) {
+	// 	$errors = [];
+	// 	$company = Company::where('code', $record_data['Company Code'])->first();
+	// 	if (!$company) {
+	// 		return [
+	// 			'success' => false,
+	// 			'errors' => ['Invalid Company : ' . $record_data['Company Code']],
+	// 		];
+	// 	}
 
-		$tax_code = TaxCode::where('code', $record_data->code)->first();
-		if (!$tax_code) {
-			$errors[] = 'Invalid Tax code : ' . $record_data->code;
-		}
+	// 	if (!isset($record_data['created_by_id'])) {
+	// 		$admin = $company->admin();
 
-		if (!isset($record_data['created_by_id'])) {
-			$admin = $company->admin();
+	// 		if (!$admin) {
+	// 			return [
+	// 				'success' => false,
+	// 				'errors' => ['Default Admin user not found'],
+	// 			];
+	// 		}
+	// 		$created_by_id = $admin->id;
+	// 	} else {
+	// 		$created_by_id = $record_data['created_by_id'];
+	// 	}
 
-			if (!$admin) {
-				return [
-					'success' => false,
-					'errors' => ['Default Admin user not found'],
-				];
-			}
-			$created_by_id = $admin->id;
-		} else {
-			$created_by_id = $record_data['created_by_id'];
-		}
+	// 	$tax = Tax::where('name', $record_data->tax_name)->first();
+	// 	if (!$tax) {
+	// 		$errors[] = 'Invalid Tax name : ' . $record_data->tax_name;
+	// 	}
 
-		$type_id = null;
+	// 	$tax_code = TaxCode::where('code', $record_data->tax_code)->first();
+	// 	if (!$tax_code) {
+	// 		$errors[] = 'Invalid Tax code : ' . $record_data->code;
+	// 	}
 
-		if (empty($record_data['Type Name'])) {
-			$errors[] = 'Type Name is empty';
-		} else {
-			$type = Config::where([
-				'config_type_id' => 82,
-				'name' => $record_data['Type Name'],
-			])->first();
-			if (!$type) {
-				$errors[] = 'Invalid Type Name : ' . $record_data['Type Name'];
-			} else {
-				$type_id = $type->id;
-			}
-		}
+	// 	if (count($errors) > 0) {
+	// 		return [
+	// 			'success' => false,
+	// 			'errors' => $errors,
+	// 		];
+	// 	}
 
-		if (count($errors) > 0) {
-			return [
-				'success' => false,
-				'errors' => $errors,
-			];
-		}
+	// 	$record = Self::firstOrNew([
+	// 		'company_id' => $company->id,
+	// 		'code' => $record_data['Code'],
+	// 	]);
+	// 	$result = Self::validateAndFillExcelColumns($record_data, Static::$excelColumnRules, $record);
+	// 	if (!$result['success']) {
+	// 		return $result;
+	// 	}
 
-		$record = Self::firstOrNew([
-			'company_id' => $company->id,
-			'code' => $record_data['Code'],
-		]);
-		$result = Self::validateAndFillExcelColumns($record_data, Static::$excelColumnRules, $record);
-		if (!$result['success']) {
-			return $result;
-		}
-
-		$record->type_id = $type_id;
-		$record->company_id = $company->id;
-		$record->created_by_id = $created_by_id;
-		$record->save();
-		return [
-			'success' => true,
-		];
-	}
+	// 	$record->type_id = $type_id;
+	// 	$record->company_id = $company->id;
+	// 	$record->created_by_id = $created_by_id;
+	// 	$record->save();
+	// 	return [
+	// 		'success' => true,
+	// 	];
+	// }
 
 	/*public static function createFromCollection($records, $company = null) {
 			foreach ($records as $key => $record_data) {
@@ -327,39 +319,43 @@ class TaxCode extends BaseModel {
 	// 	}
 	// }
 
-	// public static function mapTax($record_data) {
-	// 	$errors = [];
-	// 	$tax = Tax::where('name', $record_data->tax_name)->first();
-	// 	if (!$tax) {
-	// 		$errors[] = 'Invalid Tax name : ' . $record_data->tax_name;
-	// 	}
+	public static function mapTax($record_data) {
+		$errors = [];
+		$tax = Tax::where('name', $record_data->tax_name)->first();
+		if (!$tax) {
+			$errors[] = 'Invalid Tax name : ' . $record_data->tax_name;
+		}
 
-	// 	$tax_code = TaxCode::where('code', $record_data->code)->first();
-	// 	if (!$tax_code) {
-	// 		$errors[] = 'Invalid Tax code : ' . $record_data->code;
-	// 	}
+		$tax_code = TaxCode::where('code', $record_data->code)->first();
+		if (!$tax_code) {
+			$errors[] = 'Invalid Tax code : ' . $record_data->code;
+		}
 
-	// 	if (!empty($record_data->state_code)) {
-	// 		$state = State::where(['code', $record_data->state_code])->first();
-	// 		$state_id = $state->id;
-	// 	} else {
-	// 		$state_id = null;
-	// 	}
+		if (!empty($record_data->state_code)) {
+			$state = State::where(['code', $record_data->state_code])->first();
+			$state_id = $state->id;
+		} else {
+			$state_id = null;
+		}
 
-	// 	if (count($errors) > 0) {
-	// 		dump($errors);
-	// 		return;
-	// 	}
+		if (count($errors) > 0) {
+			return [
+				'success' => false,
+				'errors' => $errors,
+			];
+		}
 
-	// 	// $tax->taxCodes()->syncWithoutDetaching([$tax_code->id]);
-	// 	$tax->taxCodes()->syncWithoutDetaching([
-	// 		$tax_code->id => [
-	// 			'percentage' => $record_data->percentage,
-	// 			'state_id' => $state_id,
-	// 		],
-	// 	]);
+		$tax->taxCodes()->syncWithoutDetaching([
+			$tax_code->id => [
+				'percentage' => $record_data->percentage,
+				'state_id' => $state_id,
+			],
+		]);
+		return [
+			'success' => true,
+		];
 
-	// 	// return $role;
-	// }
+		// return $role;
+	}
 
 }
