@@ -2,13 +2,14 @@
 
 namespace Abs\TaxPkg;
 use Abs\BasicPkg\BaseModel;
+use Abs\HelperPkg\Traits\SeederTrait;
 use App\Company;
 use App\Config;
-use App\State;
 use Auth;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TaxCode extends BaseModel {
+	use SeederTrait;
 	use SoftDeletes;
 	protected $table = 'tax_codes';
 	protected $fillable = [
@@ -275,52 +276,52 @@ class TaxCode extends BaseModel {
 		return $list;
 	}
 
-	public static function mapTaxes($records) {
-		foreach ($records as $key => $record_data) {
-			try {
-				if (!$record_data->tax_name) {
-					continue;
-				}
-				$record = self::mapTax($record_data);
-			} catch (Exception $e) {
-				dd($e);
-			}
-		}
-	}
+	// public static function mapTaxes($records) {
+	// 	foreach ($records as $key => $record_data) {
+	// 		try {
+	// 			if (!$record_data->tax_name) {
+	// 				continue;
+	// 			}
+	// 			$record = self::mapTax($record_data);
+	// 		} catch (Exception $e) {
+	// 			dd($e);
+	// 		}
+	// 	}
+	// }
 
-	public static function mapTax($record_data) {
-		$errors = [];
-		$tax = Tax::where('name', $record_data->tax_name)->first();
-		if (!$tax) {
-			$errors[] = 'Invalid Tax name : ' . $record_data->tax_name;
-		}
+	// public static function mapTax($record_data) {
+	// 	$errors = [];
+	// 	$tax = Tax::where('name', $record_data->tax_name)->first();
+	// 	if (!$tax) {
+	// 		$errors[] = 'Invalid Tax name : ' . $record_data->tax_name;
+	// 	}
 
-		$tax_code = TaxCode::where('code', $record_data->code)->first();
-		if (!$tax_code) {
-			$errors[] = 'Invalid Tax code : ' . $record_data->code;
-		}
+	// 	$tax_code = TaxCode::where('code', $record_data->code)->first();
+	// 	if (!$tax_code) {
+	// 		$errors[] = 'Invalid Tax code : ' . $record_data->code;
+	// 	}
 
-		if (!empty($record_data->state_code)) {
-			$state = State::where(['code', $record_data->state_code])->first();
-			$state_id = $state->id;
-		} else {
-			$state_id = null;
-		}
+	// 	if (!empty($record_data->state_code)) {
+	// 		$state = State::where(['code', $record_data->state_code])->first();
+	// 		$state_id = $state->id;
+	// 	} else {
+	// 		$state_id = null;
+	// 	}
 
-		if (count($errors) > 0) {
-			dump($errors);
-			return;
-		}
+	// 	if (count($errors) > 0) {
+	// 		dump($errors);
+	// 		return;
+	// 	}
 
-		// $tax->taxCodes()->syncWithoutDetaching([$tax_code->id]);
-		$tax->taxCodes()->syncWithoutDetaching([
-			$tax_code->id => [
-				'percentage' => $record_data->percentage,
-				'state_id' => $state_id,
-			],
-		]);
+	// 	// $tax->taxCodes()->syncWithoutDetaching([$tax_code->id]);
+	// 	$tax->taxCodes()->syncWithoutDetaching([
+	// 		$tax_code->id => [
+	// 			'percentage' => $record_data->percentage,
+	// 			'state_id' => $state_id,
+	// 		],
+	// 	]);
 
-		// return $role;
-	}
+	// 	// return $role;
+	// }
 
 }
