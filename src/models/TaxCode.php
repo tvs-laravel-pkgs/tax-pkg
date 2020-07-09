@@ -326,9 +326,9 @@ class TaxCode extends BaseModel {
 			$errors[] = 'Invalid Tax name : ' . $record_data->tax_name;
 		}
 
-		$tax_code = TaxCode::where('code', $record_data->code)->first();
+		$tax_code = TaxCode::where('code', $record_data->tax_code)->first();
 		if (!$tax_code) {
-			$errors[] = 'Invalid Tax code : ' . $record_data->code;
+			$errors[] = 'Invalid Tax code : ' . $record_data->tax_code;
 		}
 
 		if (!empty($record_data->state_code)) {
