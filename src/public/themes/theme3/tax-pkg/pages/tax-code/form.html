@@ -1,0 +1,159 @@
+<div class="col-xs-12 col-sm-12">
+    <div class="mobile-breadcrumbs-wrapper">
+        <ul class="mobile-breadcrumbs-group list-inline">
+            <li><a href="#!<% $ctrl.laravel_routes['/'] %>">Master</a></li>
+            <li><a href="#!/tax-pkg/tax-code/list">Tax Code</a></li>
+            <li><a href="javascript:;">{{$ctrl.action}}</a></li>
+        </ul>
+    </div>
+</div>
+<div class="container-fluid dataTable-content--wrapper">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="dataTable--left_wrapper">
+                <h2 class="dataTable-title">Tax Code {{$ctrl.action}}</h2>
+                <p></p>
+            </div>
+        </div>
+    </div><!-- Row -->
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 mt-30">
+            <div class="row">
+                <div class="col-xs-12 col-sm-offset-1 col-sm-11 col-md-10 col-lg-10 text-center">
+                    <ul class="nav nav-tabs customTab-group activity_view cndn-tabs">
+                        <li class="active "><a data-toggle="tab" data-target="#tax-code">Tax Code</a></li>
+                        <li class=""><a data-toggle="tab" data-target="#taxes" aria-expanded="false">Taxes</a></li>
+                    </ul>
+                    <span style="color: red; font-size: 15px; display: block">* ( <i class="ion-arrow-left-c"></i> ) & ( <i class="ion-arrow-right-c"></i> ) Key using for Tab Navigation </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mt-20"></div>
+    <div class="tab-form-body">
+        <form id="form" autocomplete="off">
+            <input type="hidden" name="id" value="{{$ctrl.tax_code.id}}">
+            <div class="tab-content">
+                <!-- TAB PANEL -->
+                <div class="tab-pane fade in active" id="tax-code" data-animation="fadeInUp" data-animation-delay="300">
+                    <div class="tab-pane-wrap">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="input-text form-group">
+                                    <label>Tax Code <sup class="mandatory">*</sup></label>
+                                    <input type="text" class="form-control customForm-input tax_code_name" ng-model="$ctrl.tax_code.code" name="code" placeholder="Enter Tax Code" />
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                            <div class="col-md-3">
+                                <div class="input-text form-group">
+                                    <label>Type <sup class="mandatory">*</sup></label>
+                                    <md-select ng-model="$ctrl.tax_code.type_id" placeholder="Select Type" data-md-container-class="selectdemoSelectHeader" ng-change="showTypeinTaxes($ctrl.tax_code.type_id)">
+                                        <md-select-header class="demo-select-header ng-hide">
+                                            <input ng-model="searchType" type="search" placeholder="Search for a Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                        </md-select-header>
+                                        <md-optgroup label="Type List">
+                                            <md-option ng-value="type.id" ng-repeat="type in $ctrl.taxcode_type_list | filter:searchTravel">{{type.name}}</md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                    <input type="hidden" name="type_id" value='{{$ctrl.tax_code.type_id}}' class="required">
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                            <div class="col-md-3">
+                                <div class="input-text form-group">
+                                    <label>Active Status <sup class="mandatory">*</sup></label>
+                                    <div class="tab-switch">
+                                        <md-switch ng-model="$ctrl.switch_value" aria-label="Switch 1" ng-true-value="'Inactive'" ng-false-value="'Active'">
+                                            {{ $ctrl.switch_value }}
+                                        </md-switch>
+                                        <input type="hidden" name="status" value="{{$ctrl.switch_value}}">
+                                    </div>
+                                </div><!-- Form Group -->
+                            </div><!-- Row -->
+                            <div class="tab-pane-footer text-right">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <a class="btn btn-primary btn-nxt">Next</a>
+                                    </div>
+                                </div>
+                            </div><!-- Tab Footer -->
+                        </div><!-- Row -->
+                    </div><!-- Tab Pane Wrap -->
+                </div><!-- Tabe Pane -->
+                <div class="tab-pane fade" id="taxes" data-animation="fadeInUp" data-animation-delay="300">
+                    <div class="tab-pane-wrap">
+                        <div class="row">
+                            <div class="col-lg-8 col-md-10">
+                                <h6 class="tab-pane-title">Tax code: <span class="color-primary-light">{{$ctrl.tax_code.code}}</span></h6>
+                                <h6 class="tab-pane-title">Type: <span class="color-primary-light">{{$ctrl.tax_code_type_name}}</span></h6>
+                                <div class="table-responsive">
+                                    <table class="table table-form">
+                                        <thead>
+                                            <tr>
+                                                <th>Tax <sup class="mandatory">*</sup></th>
+                                                <th>Type <sup class="mandatory">*</sup></th>
+                                                <th>Percentage <sup class="mandatory">*</sup></th>
+                                                <th>Select State</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="(index, tax) in $ctrl.tax_code.taxes">
+                                                <td>
+                                                    <md-select ng-model="tax.pivot.tax_id" placeholder="Select Tax" data-md-container-class="selectdemoSelectHeader" ng-change="getTaxType(tax.pivot.tax_id,index)">
+                                                        <md-select-header class="demo-select-header ng-hide">
+                                                            <input ng-model="searchTax" type="search" placeholder="Search for a Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                        </md-select-header>
+                                                        <md-optgroup label="Taxs List">
+                                                            <md-option ng-value="tax.id" ng-repeat="tax in $ctrl.tax_list | filter:searchTravel">{{tax.name}}</md-option>
+                                                        </md-optgroup>
+                                                    </md-select>
+                                                    <input type="hidden" name="tax[{{index}}][tax_id]" value='{{tax.pivot.tax_id}}' class="required">
+                                                </td>
+                                                <td>
+                                                    <label class="type_based_tax_{{index}}"></label>
+                                                </td>
+                                                <td>
+                                                    <input type="text" data-eligible="{{index}}_{{tax.id}}" id="eligible_amount_data_{{index}}_{{tax.id}}" ng-model="tax.pivot.percentage" class="form-control type-sm required percentage_check" name="tax[{{index}}][percentage]" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" placeholder="Enter Percentage" />
+                                                </td>
+                                                <td class="notstate_specific_{{index}}"></td>
+                                                <td class="state_specific_{{index}}" style="display: none;">
+                                                    <md-select ng-model="tax.pivot.state_id" placeholder="Select State" data-md-container-class="selectdemoSelectHeader">
+                                                        <md-select-header class="demo-select-header ng-hide">
+                                                            <input ng-model="searchState" type="search" placeholder="Search for a State" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                        </md-select-header>
+                                                        <md-optgroup label="States List">
+                                                            <md-option ng-value="state.id" ng-repeat="state in $ctrl.state_list | filter:searchTravel">{{state.name}}</md-option>
+                                                        </md-optgroup>
+                                                    </md-select>
+                                                    <input type="hidden" name="tax[{{index}}][state_id]" value='{{tax.pivot.state_id}}' class="">
+                                                </td>
+                                                <td>
+                                                    <a href="javascript:;" ng-click="removeTax(index)"><img class="img-responsive" src="./public/theme/img/table/cndn/delete.svg" alt="Delete" /></a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="5">
+                                                    <button type="button" class="btn btn-md preview-batch" ng-click="add_tax()">+ Add Taxes</button>
+                                                </td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div><!-- Table Responsive -->
+                            </div><!-- Column -->
+                            <div class="tab-pane-footer text-right">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <a class="btn btn-secondary btn-prev">Previous</a>
+                                        <button class="btn btn-primary yellow customForm-btn" id="submit">Save</button>
+                                    </div>
+                                </div>
+                            </div><!-- Tab Footer -->
+                        </div><!-- Row -->
+                    </div><!-- Tab Pane Wrap -->
+                </div><!-- Tabe Pane -->
+            </div><!-- Tab Content -->
+        </form>
+    </div>
+</div>

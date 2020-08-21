@@ -19,6 +19,8 @@ class TaxCodeController extends Controller {
 
 	public function getTaxListInTaxCode() {
 		$this->data['tax_list'] = $tax_type_list = Tax::select('id', 'name')->where('company_id', Auth::user()->company_id)
+		//for RSA
+			->whereNotNull('type_id')
 			->get();
 		return response()->json($this->data);
 	}
@@ -45,7 +47,10 @@ class TaxCodeController extends Controller {
 		});
 
 		$tax_list = Tax::where('company_id', Auth::user()->company_id)
+		//for RSA
+			->whereNotNull('type_id')
 			->get();
+
 		foreach ($tax_list as $tax) {
 			$data_table->addColumn($tax->name, function ($tax_code_list) use ($tax) {
 				$tax_code_taxes = DB::table('tax_code_tax')
@@ -90,7 +95,7 @@ class TaxCodeController extends Controller {
 		$this->data['type_list'] = Collect(Config::getTaxList()->prepend(['id' => '', 'name' => 'Select Type']));
 		$this->data['state_list'] = collect(State::getStateList())->prepend(['id' => '', 'name' => 'Select State']);
 		$this->data['taxcode_type_list'] = Collect(Config::getTaxCodeTypeList()->prepend(['id' => '', 'name' => 'Select Type']));
-		$this->data['tax_list'] = collect(Tax::select('name', 'id')->where('company_id', Auth::user()->company_id)->get()->prepend(['id' => '', 'name' => 'Select Tax']));
+		$this->data['tax_list'] = collect(Tax::select('name', 'id')->where('company_id', Auth::user()->company_id)->whereNotNull('type_id')->get()->prepend(['id' => '', 'name' => 'Select Tax']));
 		$this->data['tax_code'] = $tax_code;
 		$this->data['action'] = $action;
 
