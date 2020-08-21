@@ -77,6 +77,7 @@ class TaxCodeController extends Controller {
 					</a>
 					';
 		});
+		$data_table->rawColumns(['name', 'action']);
 
 		return $data_table->make(true);
 
