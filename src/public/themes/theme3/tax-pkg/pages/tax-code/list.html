@@ -114,19 +114,14 @@
     </div>
 </div>
 <!-- Modal -->
-<div class="modal fade alert-modal failure" id="delete_tax_code" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
+<div class="bootbox modal fade action-confirm-modal" tabindex="-1" id="delete_tax_code" role="dialog">
+    <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">ARE YOU SURE?</h4>
+            <div class="modal-body"><button type="button" class="bootbox-close-button close" data-dismiss="modal" aria-hidden="true" style="margin-top: 0px;">×</button>
+                <div class="bootbox-body">Do you want to delete this tax code?</div>
             </div>
-            <div class="modal-body">
-                <h5>Delete</h5>
-                <p>You can’t retrive the data again, Are you sure you want to delete? </p>
-                <input type="hidden" name="tax_code_id" id="tax_code_id" value="">
-                <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">Cancel</button>
-                <button class="btn btn-rose" ng-click="deleteConfirm()" type="button" data-dismiss="modal" aria-label="Close">Yes</button>
-            </div>
+            <input type="hidden" name="tax_code_id" id="tax_code_id" value="">
+            <div class="modal-footer"><button data-bb-handler="cancel" type="button" class="btn btn-danger" data-dismiss="modal">No</button><button data-bb-handler="confirm" type="button" class="btn btn-success" ng-click="deleteConfirm()" data-dismiss="modal">Yes</button></div>
         </div>
     </div>
 </div>
