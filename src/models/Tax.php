@@ -9,6 +9,7 @@ use App\Company;
 use App\Config;
 use App\Customer;
 use App\Outlet;
+use App\Vendor;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Tax extends BaseModel {
@@ -125,7 +126,7 @@ class Tax extends BaseModel {
 		];
 	}
 
-	public static function getTaxes($service_item_id, $branch_id, $customer_id) {
+	public static function getTaxes($service_item_id, $branch_id, $customer_id, $to_account_type_id = NULL) {
 		$response = array();
 		$serviceItem = ServiceItem::find($service_item_id);
 		if (!$serviceItem) {
@@ -146,17 +147,31 @@ class Tax extends BaseModel {
 			return $response;
 		}
 
-		$customer = Customer::find($customer_id);
-		if (!$customer) {
-			$response['success'] = false;
-			$response['error'] = 'Customer not found';
-			return $response;
-		}
-
-		if (!$customer->primaryAddress || !$customer->primaryAddress->state_id) {
-			$response['success'] = false;
-			$response['error'] = 'No state informations available for customer';
-			return $response;
+		if ($to_account_type_id == 1441) {
+			//FOR VENDOR SEARCH
+			$customer = Vendor::find($customer_id);
+			if (!$customer) {
+				$response['success'] = false;
+				$response['error'] = 'Vendor not found';
+				return $response;
+			}
+			if (!$customer->primaryAddress || !$customer->primaryAddress->state_id) {
+				$response['success'] = false;
+				$response['error'] = 'No state informations available for vendor';
+				return $response;
+			}
+		} else {
+			$customer = Customer::find($customer_id);
+			if (!$customer) {
+				$response['success'] = false;
+				$response['error'] = 'Customer not found';
+				return $response;
+			}
+			if (!$customer->primaryAddress || !$customer->primaryAddress->state_id) {
+				$response['success'] = false;
+				$response['error'] = 'No state informations available for customer';
+				return $response;
+			}
 		}
 
 		$branch_state_id = $branch->state_id ? $branch->state_id : null;
