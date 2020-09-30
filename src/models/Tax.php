@@ -126,7 +126,7 @@ class Tax extends BaseModel {
 		];
 	}
 
-	public static function getTaxes($service_item_id, $branch_id, $customer_id, $to_account_type_id = NULL) {
+	public static function getTaxes($service_item_id, $branch_id, $customer_id, $to_account_type_id = NULL, $state_id = NULL) {
 		$response = array();
 		$serviceItem = ServiceItem::find($service_item_id);
 		if (!$serviceItem) {
@@ -175,8 +175,12 @@ class Tax extends BaseModel {
 		}
 
 		$branch_state_id = $branch->state_id ? $branch->state_id : null;
-		$customer_state_id = ($customer->primaryAddress ? ($customer->primaryAddress->state_id ? $customer->primaryAddress->state_id : null) : null);
-
+		if ($state_id) {
+			$customer_state_id = $state_id ? $state_id : null;
+		} else {
+			$customer_state_id = ($customer->primaryAddress ? ($customer->primaryAddress->state_id ? $customer->primaryAddress->state_id : null) : null);
+		}
+		// dd($customer_state_id);
 		if ($branch_state_id && $customer_state_id) {
 			//WITHIN STATE && STATE SPECIFIC(IF CUSTOMER STATE MATCHES)
 			if ($branch_state_id == $customer_state_id) {
