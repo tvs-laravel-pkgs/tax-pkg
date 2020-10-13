@@ -60,31 +60,6 @@ app.component('taxCodeList', {
             $(".filterTable").keyup(function() {
                 dataTable.fnFilter(this.value);
             });
-            $scope.onSelectedStatus = function(status_id) {
-                $('#status_id').val(status_id);
-                dataTable.fnFilter();
-            }
-            $scope.onDealerCodeSelect = function(dealer_id) {
-                $('#dealer_id').val(dealer_id);
-                dataTable.fnFilter();
-            }
-            $scope.onClientSelect = function(client_id) {
-                $('#client_id').val(client_id);
-                dataTable.fnFilter();
-            }
-            $('#email, #dealer_employee_name').on('keyup', function() {
-                dataTable.fnFilter();
-            });
-            $scope.resetFilter = function() {
-                $('#dealer_employee_name').val('');
-                $('#email').val('');
-                $('#dealer_id').val('');
-                $('#client_id').val('');
-                $('#status_id').val('');
-                setTimeout(function() {
-                    $('#tax_code').DataTable().ajax.reload();
-                }, 1000);
-            };
             $scope.refresh = function() {
                 $('#tax_code').DataTable().ajax.reload();
             };
@@ -265,7 +240,7 @@ app.component('taxCodeForm', {
                         contentType: false,
                     })
                     .done(function(res) {
-                        if (res.success == true) {
+                        if (res.success) {
                             $noty = new Noty({
                                 type: 'success',
                                 layout: 'topRight',
@@ -277,25 +252,19 @@ app.component('taxCodeForm', {
                             $location.path('/tax-pkg/tax-code/list');
                             $scope.$apply();
                         } else {
-                            if (!res.success == true) {
-                                $('#submit').button('reset');
-                                var errors = '';
-                                for (var i in res.errors) {
-                                    errors += '<li>' + res.errors[i] + '</li>';
-                                }
-                                $noty = new Noty({
-                                    type: 'error',
-                                    layout: 'topRight',
-                                    text: errors
-                                }).show();
-                                setTimeout(function() {
-                                    $noty.close();
-                                }, 3000);
-                            } else {
-                                $('#submit').button('reset');
-                                $location.path('/tax-pkg/tax-code/list');
-                                $scope.$apply();
+                            $('#submit').button('reset');
+                            var errors = '';
+                            for (var i in res.errors) {
+                                errors += '<li>' + res.errors[i] + '</li>';
                             }
+                            $noty = new Noty({
+                                type: 'error',
+                                layout: 'topRight',
+                                text: errors
+                            }).show();
+                            setTimeout(function() {
+                                $noty.close();
+                            }, 3000);
                         }
                     })
                     .fail(function(xhr) {
