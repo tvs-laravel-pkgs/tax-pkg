@@ -5,21 +5,21 @@
 @endif
 
 <script type="text/javascript">
-    var tax_list_template_url = "{{URL::asset($tax_pkg_prefix . '/public/themes/'.$theme.'/tax-pkg/pages/tax/list.html')}}";
+    var tax_list_template_url = "{{URL::asset($tax_pkg_prefix . '/public/themes/'.$theme.'/tax-pkg/tax/list.html')}}";
     var tax_get_form_data_url = "{{url('tax-pkg/taxes/get-form-data/')}}";
-    var tax_form_template_url = "{{URL::asset($tax_pkg_prefix . '/public/themes/'.$theme.'/tax-pkg/pages/tax/form.html')}}";
+    var tax_form_template_url = "{{URL::asset($tax_pkg_prefix . '/public/themes/'.$theme.'/tax-pkg/tax/form.html')}}";
     var tax_delete_data_url = "{{url('tax-pkg/taxes/delete/')}}";
 </script>
-<script type="text/javascript" src="{{URL::asset($tax_pkg_prefix . '/public/themes/'.$theme.'/tax-pkg/pages/tax/controller.js')}}"></script>
+<script type="text/javascript" src="{{URL::asset($tax_pkg_prefix . '/public/themes/'.$theme.'/tax-pkg/tax/controller.js')}}"></script>
  <!-- ------------------------------------------------------------------------------------------ -->
  <!-- ------------------------------------------------------------------------------------------ -->
 
 <script type="text/javascript">
-    var tax_codes_list_template_url = "{{URL::asset($tax_pkg_prefix . '/public/themes/'.$theme.'/tax-pkg/pages/tax-code/list.html')}}";
+    var tax_codes_list_template_url = "{{URL::asset($tax_pkg_prefix . '/public/themes/'.$theme.'/tax-pkg/tax-code/list.html')}}";
     var tax_codes_codes_get_form_data_url = "{{url('tax-pkg/tax-codes/get-form-data/')}}";
-    var tax_codes_form_template_url = "{{URL::asset($tax_pkg_prefix . '/public/themes/'.$theme.'/tax-pkg/pages/tax-code/form.html')}}";
+    var tax_codes_form_template_url = "{{URL::asset($tax_pkg_prefix . '/public/themes/'.$theme.'/tax-pkg/tax-code/form.html')}}";
     var tax_codes_delete_data_url = "{{url('tax-pkg/tax-codes/delete/')}}";
     var get_tax_type_based_tax_delete_data_url = "{{url('tax-pkg/tax-codes/getTaxType/')}}";
     var get_tax_type_list_based_tax_code = "{{route('getTaxListInTaxCode')}}";
 </script>
-<script type="text/javascript" src="{{URL::asset($tax_pkg_prefix . '/public/themes/'.$theme.'/tax-pkg/pages/tax-code/controller.js')}}"></script>
+<script type="text/javascript" src="{{URL::asset($tax_pkg_prefix . '/public/themes/'.$theme.'/tax-pkg/tax-code/controller.js')}}"></script>
