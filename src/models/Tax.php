@@ -19,7 +19,7 @@ class Tax extends BaseModel {
 	protected $fillable = [
 		'company_id',
 		'type_id',
-		'code',
+		'name',
 		'created_by_id',
 		'updated_by_id',
 		'deleted_by_id',
