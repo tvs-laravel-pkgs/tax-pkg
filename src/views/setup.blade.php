@@ -10,7 +10,7 @@
     var tax_form_template_url = "{{URL::asset($tax_pkg_prefix . '/public/themes/'.$theme.'/tax-pkg/tax/form.html')}}";
     var tax_delete_data_url = "{{url('tax-pkg/taxes/delete/')}}";
 </script>
-{{--<script type="text/javascript" src="{{URL::asset($tax_pkg_prefix . '/public/themes/'.$theme.'/tax-pkg/tax/controller.js')}}"></script>--}}
+<!-- <script type="text/javascript" src="{{URL::asset($tax_pkg_prefix . '/public/themes/'.$theme.'/tax-pkg/tax/controller.js')}}"></script> -->
  <!-- ------------------------------------------------------------------------------------------ -->
  <!-- ------------------------------------------------------------------------------------------ -->
 
@@ -22,4 +22,4 @@
     var get_tax_type_based_tax_delete_data_url = "{{url('tax-pkg/tax-codes/getTaxType/')}}";
     var get_tax_type_list_based_tax_code = "{{route('getTaxListInTaxCode')}}";
 </script>
-{{--<script type="text/javascript" src="{{URL::asset($tax_pkg_prefix . '/public/themes/'.$theme.'/tax-pkg/tax-code/controller.js')}}"></script>--}}
+<!-- <script type="text/javascript" src="{{URL::asset($tax_pkg_prefix . '/public/themes/'.$theme.'/tax-pkg/tax-code/controller.js')}}"></script> -->
