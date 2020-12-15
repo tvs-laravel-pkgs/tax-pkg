@@ -1,7 +1,7 @@
 <?php
 
 namespace Abs\TaxPkg;
-use Abs\BasicPkg\BaseModel;
+use Abs\BasicPkg\Models\BaseModel;
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\Company;
 use App\Config;
