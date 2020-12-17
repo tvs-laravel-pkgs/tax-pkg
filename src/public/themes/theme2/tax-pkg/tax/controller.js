@@ -159,6 +159,7 @@ app.component('taxForm', {
                     });
                 }
             } else {
+                self.tax = [];
                 $scope.add_tax();
             }
             $rootScope.loading = false;
