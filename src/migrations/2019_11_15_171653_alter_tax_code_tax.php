@@ -12,7 +12,7 @@ class AlterTaxCodeTax extends Migration {
 	 */
 	public function up() {
 		Schema::table('tax_code_tax', function (Blueprint $table) {
-			$table->integer('state_id')->nullable()->after('percentage');
+			$table->unsignedInteger('state_id')->nullable()->after('percentage');
 			$table->foreign('state_id')->references('id')->on('states')->onDelete('cascade')->onUpdate('cascade');
 		});
 	}
