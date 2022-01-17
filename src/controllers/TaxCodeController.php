@@ -34,7 +34,7 @@ class TaxCodeController extends Controller {
 				DB::raw('IF((tax_codes.deleted_at) IS NULL,"Active","Inactive") as status')
 			)
 			->join('configs', 'configs.id', 'tax_codes.type_id')
-			->where('tax_codes.company_id', Auth::user()->company_id)
+			// ->where('tax_codes.company_id', Auth::user()->company_id)
 			->orderby('tax_codes.id', 'desc')
 			->get()
 		;
@@ -96,7 +96,7 @@ class TaxCodeController extends Controller {
 		$this->data['type_list'] = Collect(Config::getTaxList()->prepend(['id' => '', 'name' => 'Select Type']));
 		$this->data['state_list'] = collect(State::getStateList())->prepend(['id' => '', 'name' => 'Select State']);
 		$this->data['taxcode_type_list'] = Collect(Config::getTaxCodeTypeList()->prepend(['id' => '', 'name' => 'Select Type']));
-		$this->data['tax_list'] = collect(Tax::select('name', 'id')->where('company_id', Auth::user()->company_id)->whereNotNull('type_id')->get()->prepend(['id' => '', 'name' => 'Select Tax']));
+		$this->data['tax_list'] = collect(Tax::select('name', 'id')->whereNotNull('type_id')->get()->prepend(['id' => '', 'name' => 'Select Tax']));
 		$this->data['tax_code'] = $tax_code;
 		$this->data['action'] = $action;
 

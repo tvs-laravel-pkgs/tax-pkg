@@ -25,7 +25,7 @@ class TaxController extends Controller {
 				DB::raw('IF((taxes.deleted_at) IS NULL,"Active","Inactive") as status')
 			)
 			->join('configs', 'configs.id', 'taxes.type_id')
-			->where('taxes.company_id', Auth::user()->company_id)
+			// ->where('taxes.company_id', Auth::user()->company_id)
 			->orderby('taxes.id', 'desc');
 
 		return Datatables::of($tax_list)
