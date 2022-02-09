@@ -34,7 +34,7 @@ class TaxCodeController extends Controller {
 				DB::raw('IF((tax_codes.deleted_at) IS NULL,"Active","Inactive") as status')
 			)
 			->join('configs', 'configs.id', 'tax_codes.type_id')
-			// ->where('tax_codes.company_id', Auth::user()->company_id)
+			->where('tax_codes.company_id', Auth::user()->company_id)
 			->orderby('tax_codes.id', 'desc')
 			->get()
 		;
