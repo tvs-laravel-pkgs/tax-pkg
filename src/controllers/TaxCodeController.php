@@ -157,6 +157,7 @@ class TaxCodeController extends Controller {
 			}
 			$tax_code->code = $request->code;
 			$tax_code->type_id = $request->type_id;
+			$tax_code->cess = (isset($request->cess) && $request->cess) ? $request->cess : null;
 			$tax_code->company_id = Auth::user()->company_id;
 			if ($request->status == 'Inactive') {
 				$tax_code->deleted_at = Carbon::now();
