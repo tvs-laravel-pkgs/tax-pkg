@@ -11,6 +11,8 @@ use DB;
 use Illuminate\Http\Request;
 use Validator;
 use Yajra\Datatables\Datatables;
+use App\Honda\RoType;
+use App\Business;
 
 class TaxCodeController extends Controller {
 
@@ -97,6 +99,9 @@ class TaxCodeController extends Controller {
 		$this->data['state_list'] = collect(State::getStateList())->prepend(['id' => '', 'name' => 'Select State']);
 		$this->data['taxcode_type_list'] = Collect(Config::getTaxCodeTypeList()->prepend(['id' => '', 'name' => 'Select Type']));
 		$this->data['tax_list'] = collect(Tax::select('name', 'id')->whereNotNull('type_id')->get()->prepend(['id' => '', 'name' => 'Select Tax']));
+		$this->data['part_type_list'] = collect(RoType::select('name', 'id')->where('company_id',Auth::user()->company_id)->get()->prepend(['id' => '', 'name' => 'Select Part Type']));
+		$this->data['business_list'] = collect(Business::select('name', 'id')->where('company_id',Auth::user()->company_id)->get()->prepend(['id' => '', 'name' => 'Select Business']));
+
 		$this->data['tax_code'] = $tax_code;
 		$this->data['action'] = $action;
 
@@ -122,13 +127,19 @@ class TaxCodeController extends Controller {
 				'code.required' => 'Tax Code is Required',
 				'code.unique' => 'Tax Code is already taken',
 				'type_id.required' => 'Type is Required',
+				'part_type_id.required' => 'Part Type is Required',
 			];
 			$validator = Validator::make($request->all(), [
 				'code' => [
 					'required',
-					'unique:tax_codes,code,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
+					// 'unique:tax_codes,code,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
+					'unique:tax_codes,code,' . $request->id . ',id,company_id,' . Auth::user()->company_id . ',type_id,' . $request->type_id. ',part_type_id,' . $request->part_type_id,
 				],
 				'type_id' => 'required',
+				'part_type_id' => [
+                    'required',
+                    'exists:honda_ro_types,id',
+                ],
 			], $error_messages);
 			if ($validator->fails()) {
 				return response()->json(['success' => false, 'errors' => $validator->errors()->all()]);
@@ -158,6 +169,9 @@ class TaxCodeController extends Controller {
 			$tax_code->code = $request->code;
 			$tax_code->type_id = $request->type_id;
 			$tax_code->cess = (isset($request->cess) && $request->cess) ? $request->cess : null;
+			$tax_code->part_type_id = $request->part_type_id;
+			$tax_code->business_id = $request->business_id;
+			$tax_code->description = $request->description;
 			$tax_code->company_id = Auth::user()->company_id;
 			if ($request->status == 'Inactive') {
 				$tax_code->deleted_at = Carbon::now();

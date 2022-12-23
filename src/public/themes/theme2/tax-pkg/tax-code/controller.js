@@ -125,6 +125,8 @@ app.component('taxCodeForm', {
             self.taxcode_type_list = response.data.taxcode_type_list;
             self.tax_list = response.data.tax_list;
             self.type_list = response.data.type_list;
+            self.part_type_list = response.data.part_type_list;
+            self.business_list = response.data.business_list;
             self.state_list = response.data.state_list;
             self.action = response.data.action;
             if (response.data.action == 'Edit') {
