@@ -21,7 +21,7 @@ class AddHondaFieldsInTaxCodeMaster extends Migration
             $table->unsignedInteger('business_id')->nullable()->after('part_type_id');
             $table->text('description')->nullable()->after('business_id');
             
-            $table->foreign('part_type_id')->references('id')->on('honda_ro_types')->onDelete('SET NULL')->onUpdate('cascade');
+            $table->foreign('part_type_id')->references('id')->on('honda_part_type_details')->onDelete('SET NULL')->onUpdate('cascade');
             $table->foreign('business_id')->references('id')->on('businesses')->onDelete('SET NULL')->onUpdate('cascade');
             $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade')->onUpdate('cascade');
         });
