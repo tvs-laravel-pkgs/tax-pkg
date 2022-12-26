@@ -39,6 +39,26 @@
                                     <div class="row">
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
+                                                <label>Business <sup class="mandatory">*</sup></label>
+                                                <md-select ng-model="$ctrl.tax_code.business_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Business" ng-change="businessChangeHandler($ctrl.tax_code.business_id)">
+                                                    <md-select-header class="demo-select-header">
+                                                        <input ng-model="searchBusiness" type="search"
+                                                            placeholder="Search for a Business"
+                                                            class="demo-header-searchbox md-text"
+                                                            ng-keydown="$event.stopPropagation()">
+                                                    </md-select-header>
+                                                    <md-optgroup>
+                                                        <md-option ng-value="i.id"
+                                                            ng-repeat="i in $ctrl.business_list | filter:searchBusiness">
+                                                            {{i.name}}
+                                                        </md-option>
+                                                    </md-optgroup>
+                                                </md-select>
+                                                <input type="hidden" name="business_id" value='{{$ctrl.tax_code.business_id}}' class="required">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
                                                 <label>Tax Code <sup class="mandatory">*</sup></label>
                                                 <input type="text" class="form-control tax_code_name" ng-model="$ctrl.tax_code.code" name="code" placeholder="Enter Tax Code" />
                                             </div><!-- Feild -->
@@ -69,7 +89,7 @@
                                                 />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
-                                        <div class="col-md-3">
+                                        <div class="col-md-3" ng-if="$ctrl.enable_part_type == true">
                                             <div class="input-text form-group">
                                                 <label>Part Type <sup class="mandatory">*</sup></label>
                                                 <md-select ng-model="$ctrl.tax_code.part_type_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Part Type">
@@ -87,26 +107,6 @@
                                                     </md-optgroup>
                                                 </md-select>
                                                 <input type="hidden" class="required" name="part_type_id" value='{{$ctrl.tax_code.part_type_id}}'>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="input-text form-group">
-                                                <label>Business</label>
-                                                <md-select ng-model="$ctrl.tax_code.business_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Business">
-                                                    <md-select-header class="demo-select-header">
-                                                        <input ng-model="searchBusiness" type="search"
-                                                            placeholder="Search for a Business"
-                                                            class="demo-header-searchbox md-text"
-                                                            ng-keydown="$event.stopPropagation()">
-                                                    </md-select-header>
-                                                    <md-optgroup>
-                                                        <md-option ng-value="i.id"
-                                                            ng-repeat="i in $ctrl.business_list | filter:searchBusiness">
-                                                            {{i.name}}
-                                                        </md-option>
-                                                    </md-optgroup>
-                                                </md-select>
-                                                <input type="hidden" name="business_id" value='{{$ctrl.tax_code.business_id}}'>
                                             </div>
                                         </div>
                                         <div class="col-md-3">

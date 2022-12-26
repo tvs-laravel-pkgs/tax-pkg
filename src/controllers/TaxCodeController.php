@@ -120,29 +120,138 @@ class TaxCodeController extends Controller {
 		return response()->json($get_type);
 	}
 
+	//OLD
+	// public function saveTaxCode(Request $request) {
+	// 	// dd($request->all());
+	// 	try {
+	// 		$error_messages = [
+	// 			'code.required' => 'Tax Code is Required',
+	// 			'code.unique' => 'Tax Code is already taken',
+	// 			'type_id.required' => 'Type is Required',
+	// 		];
+	// 		$validator = Validator::make($request->all(), [
+	// 			'code' => [
+	// 				'required',
+	// 				'unique:tax_codes,code,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
+	// 			],
+	// 			'type_id' => 'required',
+	// 		], $error_messages);
+	// 		if ($validator->fails()) {
+	// 			return response()->json(['success' => false, 'errors' => $validator->errors()->all()]);
+	// 		}
+
+	// 		if (!empty($request->tax) && $request->tax) {
+	// 			$tax_code_taxes = array_column($request->tax, 'tax_id');
+	// 			$tax_code_unique = array_unique($tax_code_taxes);
+	// 			if (count($tax_code_taxes) != count($tax_code_unique)) {
+	// 				return response()->json(['success' => false, 'errors' => ['Tax Code is already taken']]);
+	// 			}
+	// 		} else {
+	// 			return response()->json(['success' => false, 'errors' => ['Taxes is empty']]);
+	// 		}
+
+	// 		DB::beginTransaction();
+	// 		if (!$request->id) {
+	// 			$tax_code = new TaxCode;
+	// 			$tax_code->created_by_id = Auth::user()->id;
+	// 			$tax_code->created_at = Carbon::now();
+	// 			$tax_code->updated_at = NULL;
+	// 		} else {
+	// 			$tax_code = TaxCode::withTrashed()->find($request->id);
+	// 			$tax_code->updated_by_id = Auth::user()->id;
+	// 			$tax_code->updated_at = Carbon::now();
+	// 		}
+	// 		$tax_code->code = $request->code;
+	// 		$tax_code->type_id = $request->type_id;
+	// 		$tax_code->cess = (isset($request->cess) && $request->cess) ? $request->cess : null;
+	// 		$tax_code->company_id = Auth::user()->company_id;
+	// 		if ($request->status == 'Inactive') {
+	// 			$tax_code->deleted_at = Carbon::now();
+	// 			$tax_code->deleted_by_id = Auth::user()->id;
+	// 		} else {
+	// 			$tax_code->deleted_by_id = NULL;
+	// 			$tax_code->deleted_at = NULL;
+	// 		}
+	// 		$tax_code->save();
+
+	// 		if (count($request->tax) > 0) {
+	// 			$tax_code->taxes()->sync([]);
+	// 			foreach ($request->tax as $taxes) {
+	// 				$tax_code->taxes()->attach($taxes['tax_id'], [
+	// 					'percentage' => $taxes['percentage'],
+	// 					'state_id' => $taxes['state_id'],
+	// 				]);
+	// 			}
+	// 		}
+
+	// 		DB::commit();
+	// 		if (!($request->id)) {
+	// 			return response()->json(['success' => true, 'message' => ['Tax Code Added Successfully']]);
+	// 		} else {
+	// 			return response()->json(['success' => true, 'message' => ['Tax Code Updated Successfully']]);
+	// 		}
+	// 	} catch (Exceprion $e) {
+	// 		DB::rollBack();
+	// 		return response()->json(['success' => false, 'errors' => ['Exception Error' => $e->getMessage()]]);
+	// 	}
+	// }
+
 	public function saveTaxCode(Request $request) {
 		// dd($request->all());
 		try {
-			$error_messages = [
-				'code.required' => 'Tax Code is Required',
-				'code.unique' => 'Tax Code is already taken',
-				'type_id.required' => 'Type is Required',
-				'part_type_id.required' => 'Part Type is Required',
-			];
-			$validator = Validator::make($request->all(), [
-				'code' => [
-					'required',
-					// 'unique:tax_codes,code,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
-					'unique:tax_codes,code,' . $request->id . ',id,company_id,' . Auth::user()->company_id . ',type_id,' . $request->type_id. ',part_type_id,' . $request->part_type_id,
-				],
-				'type_id' => 'required',
-				'part_type_id' => [
-                    'required',
-                    'exists:honda_ro_types,id',
-                ],
-			], $error_messages);
-			if ($validator->fails()) {
-				return response()->json(['success' => false, 'errors' => $validator->errors()->all()]);
+			if(isset($request->part_type_id) && !empty($request->part_type_id)){
+				$error_messages = [
+					'business_id.required' => 'Business is Required',
+					'code.required' => 'Tax Code is Required',
+					'code.unique' => 'Tax Code is already taken',
+					'type_id.required' => 'Type is Required',
+					'part_type_id.required' => 'Part Type is Required',
+				];
+				$validator = Validator::make($request->all(), [
+					'business_id' => [
+	                    'required',
+	                    'exists:businesses,id',
+	                ],
+					'code' => [
+						'required',
+						'unique:tax_codes,code,' . $request->id . ',id,company_id,' . Auth::user()->company_id . ',type_id,' . $request->type_id. ',part_type_id,' . $request->part_type_id,
+					],
+					'type_id' => 'required',
+					'part_type_id' => [
+	                    'required',
+	                    'exists:honda_ro_types,id',
+	                ],
+				], $error_messages);
+				if ($validator->fails()) {
+					return response()->json([
+						'success' => false,
+						'errors' => $validator->errors()->all()
+					]);
+				}	
+			}else{
+				$error_messages = [
+					'business_id.required' => 'Business is Required',
+					'code.required' => 'Tax Code is Required',
+					'code.unique' => 'Tax Code is already taken',
+					'type_id.required' => 'Type is Required',
+				];
+				$validator = Validator::make($request->all(), [
+					'business_id' => [
+	                    'required',
+	                    'exists:businesses,id',
+	                ],
+					'code' => [
+						'required',
+						'unique:tax_codes,code,' . $request->id . ',id,company_id,' . Auth::user()->company_id . ',type_id,' . $request->type_id,
+					],
+					'type_id' => 'required',
+				], $error_messages);
+				if ($validator->fails()) {
+					return response()->json([
+						'success' => false,
+						'errors' => $validator->errors()->all()
+					]);
+				}
 			}
 
 			if (!empty($request->tax) && $request->tax) {
@@ -169,8 +278,8 @@ class TaxCodeController extends Controller {
 			$tax_code->code = $request->code;
 			$tax_code->type_id = $request->type_id;
 			$tax_code->cess = (isset($request->cess) && $request->cess) ? $request->cess : null;
-			$tax_code->part_type_id = $request->part_type_id;
-			$tax_code->business_id = $request->business_id;
+			$tax_code->part_type_id = isset($request->part_type_id) ? $request->part_type_id : null;
+			$tax_code->business_id = isset($request->business_id) ? $request->business_id : null;
 			$tax_code->description = $request->description;
 			$tax_code->company_id = Auth::user()->company_id;
 			if ($request->status == 'Inactive') {
@@ -198,7 +307,7 @@ class TaxCodeController extends Controller {
 			} else {
 				return response()->json(['success' => true, 'message' => ['Tax Code Updated Successfully']]);
 			}
-		} catch (Exceprion $e) {
+		} catch (\Exception $e) {
 			DB::rollBack();
 			return response()->json(['success' => false, 'errors' => ['Exception Error' => $e->getMessage()]]);
 		}
@@ -209,4 +318,34 @@ class TaxCodeController extends Controller {
 			return response()->json(['success' => true]);
 		}
 	}
+
+	public function getBusinessData(Request $request){
+        // dd($request->all());
+        try {
+            $validator = Validator::make($request->all(), [
+                'id' => [
+                    'required',
+                    'exists:businesses,id',
+                ],
+            ]);
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Validation Error',
+                    'errors' => $validator->errors()->all(),
+                ]);
+            }
+
+            $business = Business::find($request->id);
+            return response()->json([
+                'success' => true,
+                'business' => $business
+            ]);
+        } catch (\Exception $e) {
+			return response()->json([
+                'success' => false,
+                'errors' => ['Exception Error' => $e->getMessage() . '. Line:' . $e->getLine() . '. File:' . $e->getFile()]
+            ]);
+        }
+    }
 }

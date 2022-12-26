@@ -140,10 +140,14 @@ app.component('taxCodeForm', {
                     $scope.getTaxType(value.id, index);
                 });
                 $scope.showTypeinTaxes(self.tax_code.type_id);
+                if(self.tax_code.part_type_id){
+                    self.enable_part_type = true;
+                }
             } else {
                 self.tax_code.taxes = [];
                 $scope.add_tax();
                 self.switch_value = 'Active';
+                self.enable_part_type = false;
             }
             $rootScope.loading = false;
         });
@@ -218,6 +222,25 @@ app.component('taxCodeForm', {
                 });
             }
         });
+
+        $scope.businessChangeHandler = function (id) {
+            $http.post(
+                laravel_routes['getTaxCodeBusinessData'], {
+                    id: id,
+                }
+            ).then(function (response) {
+                if (response.data.success == true) {
+                    if(response.data.business.in_taxcode_part_type_required == 1){
+                        self.enable_part_type = true;
+                    }else{
+                        self.enable_part_type = false;
+                    }
+                } else {
+                    self.enable_part_type = false;
+                    custom_noty('error', response.data.errors);
+                }
+            });
+        }
 
         //VALIDATEOR FOR MULTIPLE 
         $.validator.messages.minlength = 'Minimum of 3 charaters';
