@@ -100,7 +100,7 @@ class TaxCodeController extends Controller {
 		$this->data['taxcode_type_list'] = Collect(Config::getTaxCodeTypeList()->prepend(['id' => '', 'name' => 'Select Type']));
 		$this->data['tax_list'] = collect(Tax::select('name', 'id')->whereNotNull('type_id')->get()->prepend(['id' => '', 'name' => 'Select Tax']));
 		$this->data['part_type_list'] = collect(RoType::select('name', 'id')->where('company_id',Auth::user()->company_id)->get()->prepend(['id' => '', 'name' => 'Select Part Type']));
-		$this->data['business_list'] = collect(Business::select('name', 'id')->where('company_id',Auth::user()->company_id)->get()->prepend(['id' => '', 'name' => 'Select Business']));
+		$this->data['business_list'] = collect(Business::select('name', 'id')->where('company_id',Auth::user()->company_id)->whereIn('code',['Honda','COMMON'])->get()->prepend(['id' => '', 'name' => 'Select Business']));
 
 		$this->data['tax_code'] = $tax_code;
 		$this->data['action'] = $action;

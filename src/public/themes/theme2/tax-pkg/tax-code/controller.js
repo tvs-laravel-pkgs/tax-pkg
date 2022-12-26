@@ -148,6 +148,12 @@ app.component('taxCodeForm', {
                 $scope.add_tax();
                 self.switch_value = 'Active';
                 self.enable_part_type = false;
+
+                var default_business = (self.business_list).filter( business => business.name == 'COMMON' );
+                if(default_business && default_business[0])
+                {
+                    self.tax_code.business_id = default_business[0].id;
+                }
             }
             $rootScope.loading = false;
         });
