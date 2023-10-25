@@ -68,6 +68,15 @@ class TaxController extends Controller {
 	public function saveTax(Request $request) {
 		// dd($request->all());
 		try {
+
+			$default_company = Config::where('id', 134341)->first()->name;
+			$default_company_id = Config::where('id', 134342)->first()->name;
+			if($default_company == "Yes"){
+				$company_id = $default_company_id;
+			}else{
+				$company_id = Auth::user()->company_id;
+			}
+
 			if (!empty($request->tax)) {
 				foreach ($request->tax as $taxes) {
 					$error_messages = [
@@ -77,7 +86,7 @@ class TaxController extends Controller {
 					$validator = Validator::make($taxes, [
 						'name' => [
 							'required',
-							'unique:taxes,name,' . $taxes['id'] . ',id,company_id,' . Auth::user()->company_id,
+							'unique:taxes,name,' . $taxes['id'] . ',id,company_id,' . $company_id,
 						],
 					], $error_messages);
 					if ($validator->fails()) {
@@ -103,7 +112,7 @@ class TaxController extends Controller {
 					$tax->updated_at = Carbon::now();
 				}
 				$tax->name = $taxes['name'];
-				$tax->company_id = Auth::user()->company_id;
+				$tax->company_id = $company_id;
 				$tax->type_id = $taxes['type_id'];
 				if ($taxes['status'] == 'Inactive') {
 					$tax->deleted_at = Carbon::now();
